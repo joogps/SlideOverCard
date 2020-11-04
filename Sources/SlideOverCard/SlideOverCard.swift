@@ -7,8 +7,11 @@
 
 import SwiftUI
 
-struct SlideOverCard<Content:View>: View {
+struct SlideOverCardView<Content:View>: View {
     @Binding var isPresented: Bool
+    
+    @Binding var dragEnabled: Bool
+    @Binding var dragToDismiss: Bool
     
     let content: () -> Content
     
@@ -21,43 +24,55 @@ struct SlideOverCard<Content:View>: View {
                             .fill(Color(.systemGray6)))
             .offset(x: 0, y: viewOffset/pow(2, (abs(viewOffset)/500+1)))
             .gesture(
+                dragEnabled ?
                 DragGesture()
                     .onChanged { gesture in
                         viewOffset = gesture.translation.height
                     }
                     .onEnded() { _ in
-                        isPresented = !(viewOffset > 175)
+                        isPresented = !(viewOffset > 175 && dragToDismiss)
                         viewOffset = .zero
-                    }
+                    } : nil
             )
     }
 }
 
 extension View {
-    func slideOverCard<Content:View>(isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) -> some View {
+    func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
         ZStack {
-            self.zIndex(1)
+            self
             
             if isPresented.wrappedValue {
-                let isiPad = UIDevice.current.userInterfaceIdiom == .pad
                 Color.black.opacity(0.3)
-                    .edgesIgnoringSafeArea(.all)
-                    .zIndex(2)
+                    .ignoresSafeArea()
+                    .zIndex(1)
                 VStack {
                     Spacer()
-                    SlideOverCard(isPresented: isPresented) {
-                        content()
-                    }.padding(isiPad ? 0 : 6)
-                    if isiPad { Spacer() }
-                }.transition(isiPad ?  AnyTransition.offset(y: 48).combined(with: .opacity) : .move(edge: .bottom))
+                    
+                    // If the device is an iPad, present centered and resized view
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        SlideOverCardView(isPresented: isPresented,
+                                          dragEnabled: dragEnabled,
+                                          dragToDismiss: dragToDismiss) {
+                            content()
+                        }.aspectRatio(1.0, contentMode: .fit)
+                        Spacer()
+                    } else {
+                        SlideOverCardView(isPresented: isPresented,
+                                          dragEnabled: dragEnabled,
+                                          dragToDismiss: dragToDismiss) {
+                            content()
+                        }.padding(6)
+                    }
+                }.transition(.move(edge: .bottom))
                 .animation(.spring(response: 0.35, dampingFraction: 1))
                 .ignoresSafeArea(.container, edges: .bottom)
-                .zIndex(3)
+                .zIndex(2)
             }
         }
     }
 }
-
+    
 struct SlideOverCard_Previews: PreviewProvider {
     static var previews: some View {
         PreviewWrapper()
@@ -66,11 +81,18 @@ struct SlideOverCard_Previews: PreviewProvider {
     struct PreviewWrapper: View {
         @State var isPresented = true
         
+        @State var canBeDragged = true
+        @State var canBeDismissed = true
+        
         var body: some View {
-            Button("Show card", action: {
-                    withAnimation { isPresented = true } }).slideOverCard(isPresented: $isPresented, content: {
-                        PlaceholderContent()
+            VStack {
+                Button("Show card", action: { isPresented = true })
+                Toggle("Can be dragged", isOn: $canBeDragged)
+                Toggle("Can be dismissed", isOn: $canBeDismissed)
+            }.slideOverCard(isPresented: $isPresented, dragEnabled: $canBeDragged, dragToDismiss: $canBeDismissed, content: {
+                PlaceholderContent()
             })
+
         }
     }
     
