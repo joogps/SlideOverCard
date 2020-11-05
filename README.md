@@ -38,7 +38,7 @@ Here, `$isPresented` is a binding to a `@State` boolean. This way you can dismis
 Alternatively, you can instantiate the card by your own with `SlideOverCardView`. Please note it won't be automatically positioned in the screen.
 ```swift
 if isPresented {
-  SlideOverCardView(isPresented: $isPresented, dragEnabled: true, dragToDismiss: true) {
+  SlideOverCardView(isPresented: $isPresented) {
     // Here goes your super-duper cool content
   }
 }

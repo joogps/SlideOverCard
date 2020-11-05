@@ -10,8 +10,8 @@ import SwiftUI
 struct SlideOverCardView<Content:View>: View {
     @Binding var isPresented: Bool
     
-    @Binding var dragEnabled: Bool
-    @Binding var dragToDismiss: Bool
+    var dragEnabled: Binding<Bool>?
+    var dragToDismiss: Binding<Bool>?
     
     let content: () -> Content
     
@@ -22,18 +22,22 @@ struct SlideOverCardView<Content:View>: View {
             .padding(20)
             .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
                             .fill(Color(.systemGray6)))
-            .offset(x: 0, y: viewOffset/pow(2, (abs(viewOffset)/500+1)))
+            .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
             .gesture(
-                dragEnabled ?
+                getBoolean(from: dragEnabled) ?
                 DragGesture()
                     .onChanged { gesture in
                         viewOffset = gesture.translation.height
                     }
                     .onEnded() { _ in
-                        isPresented = !(viewOffset > 175 && dragToDismiss)
+                        isPresented = !(viewOffset > 175 && getBoolean(from: dragToDismiss))
                         viewOffset = .zero
                     } : nil
             )
+    }
+    
+    func getBoolean(from binding: Binding<Bool>?, _ defaultValue: Bool = true) -> Bool {
+        return (binding ?? .constant(defaultValue)).wrappedValue
     }
 }
 
