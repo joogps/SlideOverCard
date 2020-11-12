@@ -61,4 +61,4 @@ There's also the `SOCExitButton()` view. This view will create the default exit 
 
 # Example
 
-The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/74fe5b8531bf0cae46d30d4a203c9282ce0676c6/Sources/SlideOverCard/SlideOverCard.swift#L85). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
+The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/94abf3ff01ce720b118ab70062f5e512f5ff2514/Sources/SlideOverCard/SlideOverCard.swift#L141). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
