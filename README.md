@@ -57,7 +57,7 @@ There are a few accessory views to enhance your card layout. The first one is th
 Button("Do something", action: { }).buttonStyle(SOCActionButton())
 ```
 
-There's also the `SOCExitButton()` view. This view will create the default exit button icon used for the card (based on github.com/joogps/ExitButton).
+There's also the `SOCExitButton()` view. This view will create the default exit button icon used for the card (based on https://github.com/joogps/ExitButton).
 
 # Example
 
