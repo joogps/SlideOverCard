@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SlideOverCardView<Content:View>: View {
+public struct SlideOverCardView<Content:View>: View {
     @Binding var isPresented: Bool
     
     var dragEnabled: Binding<Bool> = .constant(true)
@@ -18,7 +18,7 @@ struct SlideOverCardView<Content:View>: View {
     
     @State private var viewOffset: CGFloat = 0.0
     
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
             if displayExitButton.wrappedValue {
                 Button(action: { isPresented = false }) {
@@ -45,10 +45,48 @@ struct SlideOverCardView<Content:View>: View {
     }
 }
 
-struct SOCExitButton: View {
+protocol SOCButton: ButtonStyle {
+    var foregroundColor: Color { get }
+    var backgroundColor: Color { get }
+}
+
+extension SOCButton {
+    public func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            Spacer()
+            configuration.label
+                .font(Font.body.weight(.medium))
+                .padding(.vertical, 20)
+                .foregroundColor(foregroundColor)
+            Spacer()
+        }.background(backgroundColor).cornerRadius(12).overlay(configuration.isPressed ? Color.black.opacity(0.2) : nil)
+    }
+}
+
+public struct SOCActionButton: SOCButton {
+    var foregroundColor: Color = .white
+    var backgroundColor: Color = .accentColor
+}
+
+public struct SOCAlternativeButton: SOCButton {
+    var foregroundColor: Color = .primary
+    var backgroundColor: Color = Color(.systemGray5)
+}
+
+public struct SOCEmptyButton: ButtonStyle {
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(Font.body.weight(.bold))
+            .padding(.top, 18)
+            .foregroundColor(.accentColor)
+            .opacity(configuration.isPressed ? 0.5 : 1)
+    }
+}
+
+public struct SOCExitButton: View {
     @Environment(\.colorScheme) var colorScheme
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             Circle()
                 .fill(Color(white: colorScheme == .dark ? 0.19 : 0.93))
@@ -61,47 +99,9 @@ struct SOCExitButton: View {
         }
     }
 }
-
-protocol SOCButton: ButtonStyle {
-    var foregroundColor: Color { get }
-    var backgroundColor: Color { get }
-}
-
-extension SOCButton {
-    func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            Spacer()
-            configuration.label
-                .font(Font.body.weight(.medium))
-                .padding(.vertical, 20)
-                .foregroundColor(foregroundColor)
-            Spacer()
-        }.background(backgroundColor).cornerRadius(12).overlay(configuration.isPressed ? Color.black.opacity(0.3) : nil)
-    }
-}
-
-struct SOCActionButton: SOCButton {
-    var foregroundColor: Color = .white
-    var backgroundColor: Color = .accentColor
-}
-
-struct SOCAlternativeButton: SOCButton {
-    var foregroundColor: Color = .primary
-    var backgroundColor: Color = Color(.systemGray5)
-}
-
-struct SOCEmptyButton: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(Font.body.weight(.bold))
-            .padding(.top, 20)
-            .foregroundColor(.accentColor)
-            .opacity(configuration.isPressed ? 0.5 : 1)
-    }
-}
  
 extension View {
-    func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
+    public func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
         ZStack {
             self
             
