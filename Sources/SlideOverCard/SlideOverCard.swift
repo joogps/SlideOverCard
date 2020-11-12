@@ -10,39 +10,98 @@ import SwiftUI
 struct SlideOverCardView<Content:View>: View {
     @Binding var isPresented: Bool
     
-    var dragEnabled: Binding<Bool>?
-    var dragToDismiss: Binding<Bool>?
+    var dragEnabled: Binding<Bool> = .constant(true)
+    var dragToDismiss: Binding<Bool> = .constant(true)
+    var displayExitButton: Binding<Bool> = .constant(true)
     
     let content: () -> Content
     
     @State private var viewOffset: CGFloat = 0.0
     
     var body: some View {
-        content()
-            .padding(20)
-            .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
-                            .fill(Color(.systemGray6)))
-            .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
-            .gesture(
-                getBoolean(from: dragEnabled) ?
-                DragGesture()
-                    .onChanged { gesture in
-                        viewOffset = gesture.translation.height
-                    }
-                    .onEnded() { _ in
-                        isPresented = !(viewOffset > 175 && getBoolean(from: dragToDismiss))
-                        viewOffset = .zero
-                    } : nil
-            )
-    }
-    
-    func getBoolean(from binding: Binding<Bool>?, _ defaultValue: Bool = true) -> Bool {
-        return (binding ?? .constant(defaultValue)).wrappedValue
+        VStack(alignment: .trailing, spacing: 0) {
+            if displayExitButton.wrappedValue {
+                Button(action: { isPresented = false }) {
+                    SOCExitButton()
+                }.frame(width: 24, height: 24)
+            }
+            content()
+                .padding([.horizontal, displayExitButton.wrappedValue ? .bottom : .vertical], 14)
+        }.padding(20)
+        .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
+                        .fill(Color(.systemGray6)))
+        .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
+        .gesture(
+            dragEnabled.wrappedValue ?
+            DragGesture()
+                .onChanged { gesture in
+                    viewOffset = gesture.translation.height
+                }
+                .onEnded() { _ in
+                    isPresented = !(viewOffset > 175 && dragToDismiss.wrappedValue)
+                    viewOffset = .zero
+                } : nil
+        )
     }
 }
 
+struct SOCExitButton: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color(white: colorScheme == .dark ? 0.19 : 0.93))
+            Image(systemName: "xmark")
+                .resizable()
+                .scaledToFit()
+                .font(Font.body.weight(.bold))
+                .scaleEffect(0.416)
+                .foregroundColor(Color(white: colorScheme == .dark ? 0.62 : 0.51))
+        }
+    }
+}
+
+protocol SOCButton: ButtonStyle {
+    var foregroundColor: Color { get }
+    var backgroundColor: Color { get }
+}
+
+extension SOCButton {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            Spacer()
+            configuration.label
+                .font(Font.body.weight(.medium))
+                .padding(.vertical, 20)
+                .foregroundColor(foregroundColor)
+            Spacer()
+        }.background(backgroundColor).cornerRadius(12).overlay(configuration.isPressed ? Color.black.opacity(0.3) : nil)
+    }
+}
+
+struct SOCActionButton: SOCButton {
+    var foregroundColor: Color = .white
+    var backgroundColor: Color = .accentColor
+}
+
+struct SOCAlternativeButton: SOCButton {
+    var foregroundColor: Color = .primary
+    var backgroundColor: Color = Color(.systemGray5)
+}
+
+struct SOCEmptyButton: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(Font.body.weight(.bold))
+            .padding(.top, 20)
+            .foregroundColor(.accentColor)
+            .opacity(configuration.isPressed ? 0.5 : 1)
+    }
+}
+ 
 extension View {
-    func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
+    func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
         ZStack {
             self
             
@@ -57,14 +116,16 @@ extension View {
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         SlideOverCardView(isPresented: isPresented,
                                           dragEnabled: dragEnabled,
-                                          dragToDismiss: dragToDismiss) {
+                                          dragToDismiss: dragToDismiss,
+                                          displayExitButton: displayExitButton) {
                             content()
                         }.aspectRatio(1.0, contentMode: .fit)
                         Spacer()
                     } else {
                         SlideOverCardView(isPresented: isPresented,
                                           dragEnabled: dragEnabled,
-                                          dragToDismiss: dragToDismiss) {
+                                          dragToDismiss: dragToDismiss,
+                                          displayExitButton: displayExitButton) {
                             content()
                         }.padding(6)
                     }
@@ -80,6 +141,7 @@ extension View {
 struct SlideOverCard_Previews: PreviewProvider {
     static var previews: some View {
         PreviewWrapper()
+        PreviewWrapper().environment(\.colorScheme, .dark)
     }
     
     struct PreviewWrapper: View {
@@ -87,16 +149,20 @@ struct SlideOverCard_Previews: PreviewProvider {
         
         @State var canBeDragged = true
         @State var canBeDismissed = true
+        @State var showingExitButton = true
         
         var body: some View {
-            VStack {
-                Button("Show card", action: { isPresented = true })
-                Toggle("Can be dragged", isOn: $canBeDragged)
-                Toggle("Can be dismissed", isOn: $canBeDismissed)
-            }.slideOverCard(isPresented: $isPresented, dragEnabled: $canBeDragged, dragToDismiss: $canBeDismissed, content: {
+            ZStack {
+                Color(.systemBackground).ignoresSafeArea()
+                VStack {
+                    Button("Show card", action: { withAnimation { isPresented = true } })
+                    Toggle("Can be dragged", isOn: $canBeDragged)
+                    Toggle("Can be dismissed", isOn: $canBeDismissed)
+                    Toggle("Showing exit button", isOn: $showingExitButton)
+                }
+            }.slideOverCard(isPresented: $isPresented, dragEnabled: $canBeDragged, dragToDismiss: $canBeDismissed, displayExitButton: $showingExitButton, content: {
                 PlaceholderContent()
             })
-
         }
     }
     
@@ -115,7 +181,14 @@ struct SlideOverCard_Previews: PreviewProvider {
                     RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(Color.gray)
                     Text("Content").foregroundColor(.white)
                 }
-            }.padding(14).frame(height: 420)
+                
+                VStack(spacing: 0) {
+                    Button("Do something", action: {
+                    }).buttonStyle(SOCActionButton())
+                    Button("Just skip it", action: {
+                    }).buttonStyle(SOCEmptyButton())
+                }
+            }.frame(height: 480)
         }
     }
 }
