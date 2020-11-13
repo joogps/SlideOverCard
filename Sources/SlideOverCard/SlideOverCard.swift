@@ -21,7 +21,7 @@ public struct SlideOverCardView<Content:View>: View {
     public var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
             if displayExitButton.wrappedValue {
-                Button(action: { isPresented = false }) {
+                Button(action: { withAnimation { isPresented = false } }) {
                     SOCExitButton()
                 }.frame(width: 24, height: 24)
             }
@@ -33,13 +33,15 @@ public struct SlideOverCardView<Content:View>: View {
         .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
         .gesture(
             dragEnabled.wrappedValue ?
-            DragGesture()
+                DragGesture()
                 .onChanged { gesture in
                     viewOffset = gesture.translation.height
                 }
                 .onEnded() { _ in
-                    isPresented = !(viewOffset > 175 && dragToDismiss.wrappedValue)
-                    viewOffset = .zero
+                    withAnimation {
+                        isPresented = !(viewOffset > 175 && dragToDismiss.wrappedValue)
+                        viewOffset = .zero
+                    }
                 } : nil
         )
     }
@@ -99,7 +101,7 @@ public struct SOCExitButton: View {
         }
     }
 }
- 
+
 extension View {
     public func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
         ZStack {
@@ -138,7 +140,7 @@ extension View {
         }
     }
 }
-    
+
 struct SlideOverCard_Previews: PreviewProvider {
     static var previews: some View {
         PreviewWrapper()
