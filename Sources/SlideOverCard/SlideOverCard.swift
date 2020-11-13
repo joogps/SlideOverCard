@@ -108,6 +108,7 @@ extension View {
             if isPresented.wrappedValue {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
+                    .transition(.opacity)
                     .zIndex(1)
                 VStack {
                     Spacer()
