@@ -34,15 +34,11 @@ Here, `$isPresented` is a boolean binding. This way you can dismiss the view any
 // This creates a card that can be dragged, but can't be dismissed
 .slideOverCard(isPresented: $isPresented, dragToDismiss: false) {
 }
-```
 
-```swift
 // This creates a card that can't be dragged
 .slideOverCard(isPresented: $isPresented, dragEnabled: false) {
 }
-```
 
-```swift
 // This creates a card with no exit button
 .slideOverCard(isPresented: $isPresented, displayExitButton: false) {
 }
@@ -51,14 +47,14 @@ Here, `$isPresented` is a boolean binding. This way you can dismiss the view any
 In case you want to execute code when the view is dismissed (either by the exit button or drag controls), you can also set an optional `onDismiss` closure parameter.
 
 ```swift
-// This will print text when dismissed
+// This card will print some text when dismissed
 .slideOverCard(isPresented: $isPresented, onDismiss: {
     print("I was dismissed")
 }) {
 }
 ```
 
-Alternatively, you can instantiate the card using a binding to an optional or even by your own with `SlideOverCardView`. Please note it won't be automatically positioned or animated in the screen.
+Alternatively, you can add the card using a binding to an optional or even instantiate it by your own with `SlideOverCardView`. Please note that this way it won't be automatically positioned in the screen or have transitions.
 ```swift
 // This uses a binding to an optional object
 .slideOverCard(item: $activeCard) { item in
@@ -66,7 +62,7 @@ Alternatively, you can instantiate the card using a binding to an optional or ev
 ```
 
 ```swift
-// Or using the standalone view
+// Using the standalone view
 if isPresented {
   SlideOverCardView(isPresented: $isPresented) {
     // Here goes your super-duper cool content
@@ -85,4 +81,4 @@ There's also the `SOCExitButton()` view. This view will create the default exit 
 
 # Example
 
-The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/ddf43e9fbed9f8d21ceb5a375f024767fca30843/Sources/SlideOverCard/SlideOverCard.swift#L172). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
+The SwiftUI code for a demo view (which can be seen on the top portion of this page) can be found [here](https://github.com/joogps/SlideOverCard/blob/ddf43e9fbed9f8d21ceb5a375f024767fca30843/Sources/SlideOverCard/SlideOverCard.swift#L172). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
