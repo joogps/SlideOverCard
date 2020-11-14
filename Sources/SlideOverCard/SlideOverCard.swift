@@ -85,14 +85,19 @@ extension SOCButton {
 public struct SOCActionButton: SOCButton {
     var foregroundColor: Color = .white
     var backgroundColor: Color = .accentColor
+    
+    public init() {}
 }
 
 public struct SOCAlternativeButton: SOCButton {
     var foregroundColor: Color = .primary
     var backgroundColor: Color = Color(.systemGray5)
+    
+    public init() {}
 }
 
 public struct SOCEmptyButton: ButtonStyle {
+    public init() {}
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(Font.body.weight(.bold))
