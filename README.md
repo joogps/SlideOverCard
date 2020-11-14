@@ -43,8 +43,25 @@ Here, `$isPresented` is a boolean binding. This way you can dismiss the view any
 }
 ```
 
-Alternatively, you can instantiate the card by your own with `SlideOverCardView`. Please note it won't be automatically positioned in the screen.
+In case you want to execute code when the view is dismissed (either by the exit button or drag controls), you can also set an optional `onDismiss` closure parameter.
+
 ```swift
+// This will print text when dismissed
+.slideOverCard(isPresented: $isPresented, onDismiss: {
+    print("I was dismissed")
+}) {
+}
+```
+
+Alternatively, you can instantiate the card using a binding to an optional or even by your own with `SlideOverCardView`. Please note it won't be automatically positioned or animated in the screen.
+```swift
+// This uses a binding to an optional object
+.slideOverCard(item: $activeCard) { item in
+}
+```
+
+```swift
+// Or using the standalone view
 if isPresented {
   SlideOverCardView(isPresented: $isPresented) {
     // Here goes your super-duper cool content
@@ -63,4 +80,4 @@ There's also the `SOCExitButton()` view. This view will create the default exit 
 
 # Example
 
-The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/94abf3ff01ce720b118ab70062f5e512f5ff2514/Sources/SlideOverCard/SlideOverCard.swift#L141). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
+The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/ddf43e9fbed9f8d21ceb5a375f024767fca30843/Sources/SlideOverCard/SlideOverCard.swift#L172). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
