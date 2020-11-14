@@ -8,24 +8,38 @@
 import SwiftUI
 
 public struct SlideOverCardView<Content:View>: View {
-    @Binding var isPresented: Bool
+    var isPresented: Binding<Bool>
+    
+    let onDismiss: (() -> Void)?
     
     var dragEnabled: Binding<Bool> = .constant(true)
     var dragToDismiss: Binding<Bool> = .constant(true)
     var displayExitButton: Binding<Bool> = .constant(true)
     
-    let content: () -> Content
+    let content: Content
+    
+    init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping () -> Content) {
+        self.isPresented = isPresented
+        self.onDismiss = onDismiss
+        self.dragEnabled = dragEnabled
+        self.dragToDismiss = dragToDismiss
+        self.displayExitButton = displayExitButton
+        self.content = content()
+    }
     
     @State private var viewOffset: CGFloat = 0.0
     
     public var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
             if displayExitButton.wrappedValue {
-                Button(action: { withAnimation { isPresented = false } }) {
+                Button(action: {
+                    withAnimation { isPresented.wrappedValue = false }
+                        if (onDismiss != nil) { onDismiss!() }
+                }) {
                     SOCExitButton()
                 }.frame(width: 24, height: 24)
             }
-            content()
+            content
                 .padding([.horizontal, displayExitButton.wrappedValue ? .bottom : .vertical], 14)
         }.padding(20)
         .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
@@ -39,7 +53,10 @@ public struct SlideOverCardView<Content:View>: View {
                 }
                 .onEnded() { _ in
                     withAnimation {
-                        isPresented = !(viewOffset > 175 && dragToDismiss.wrappedValue)
+                        if viewOffset > 175 && dragToDismiss.wrappedValue {
+                            isPresented.wrappedValue = false
+                            if (onDismiss != nil) { onDismiss!() }
+                        }
                         viewOffset = .zero
                     }
                 } : nil
@@ -103,7 +120,7 @@ public struct SOCExitButton: View {
 }
 
 extension View {
-    public func slideOverCard<Content:View>(isPresented: Binding<Bool>, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
+    public func slideOverCard<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping () -> Content) -> some View {
         ZStack {
             self
             
@@ -118,6 +135,7 @@ extension View {
                     // If the device is an iPad, present centered and resized view
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         SlideOverCardView(isPresented: isPresented,
+                                          onDismiss: onDismiss,
                                           dragEnabled: dragEnabled,
                                           dragToDismiss: dragToDismiss,
                                           displayExitButton: displayExitButton) {
@@ -126,6 +144,7 @@ extension View {
                         Spacer()
                     } else {
                         SlideOverCardView(isPresented: isPresented,
+                                          onDismiss: onDismiss,
                                           dragEnabled: dragEnabled,
                                           dragToDismiss: dragToDismiss,
                                           displayExitButton: displayExitButton) {
@@ -137,6 +156,15 @@ extension View {
                 .ignoresSafeArea(.container, edges: .bottom)
                 .zIndex(2)
             }
+        }
+    }
+    
+    public func slideOverCard<Item:Identifiable, Content:View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping (Item) -> Content) -> some View {
+        return Group {
+            if item.wrappedValue != nil {
+                let binding = Binding(get: { item.wrappedValue != nil }, set: { if !$0 { item.wrappedValue = nil } })
+                self.slideOverCard(isPresented: binding, onDismiss: onDismiss, dragEnabled: dragEnabled, dragToDismiss: dragToDismiss, displayExitButton: displayExitButton, content: { content(item.wrappedValue!) } )
+            } else { self }
         }
     }
 }
@@ -175,8 +203,8 @@ struct SlideOverCard_Previews: PreviewProvider {
                 HStack {
                     Spacer()
                     VStack {
-                        Text("Large title").font(Font.largeTitle.weight(.bold))
-                        Text("A nice and brief description")
+                        Text("Large title").font(.system(size: 28, weight: .bold))
+                        Text("A nice and brief description").font(.system(size: 13))
                     }
                     Spacer()
                 }
