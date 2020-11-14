@@ -10,7 +10,12 @@
 
 A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods and Apple Card setup, NFC scanning and more. It is specially great for setup interactions.
 
-<img alt="QR code scanning demo gif" src="../assets/demo-qr-code.gif" height=400px>
+<p>
+    <img alt="QR code scanner demo" src="../assets/demo-qr-code.gif" height=400px>
+    <img alt="Example preview demo" src="../assets/demo-example.gif" height=400px>
+</p>
+
+_From left to right: QR code scanner prompt (made with https://github.com/twostraws/CodeScanner) and demo of the project's preview_
 
 ## Installation
 This repository is a Swift package, so all you gotta do is search and include it in your project under **File > Swift Package Manager**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
