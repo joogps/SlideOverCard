@@ -34,7 +34,7 @@ public struct SlideOverCardView<Content:View>: View {
             if displayExitButton.wrappedValue {
                 Button(action: {
                     withAnimation { isPresented.wrappedValue = false }
-                        if (onDismiss != nil) { onDismiss!() }
+                    if (onDismiss != nil) { onDismiss!() }
                 }) {
                     SOCExitButton()
                 }.frame(width: 24, height: 24)
@@ -98,6 +98,7 @@ public struct SOCAlternativeButton: SOCButton {
 
 public struct SOCEmptyButton: ButtonStyle {
     public init() {}
+    
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(Font.body.weight(.bold))
