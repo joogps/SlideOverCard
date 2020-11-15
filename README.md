@@ -33,12 +33,12 @@ You can add a card to your app in two different ways. The first one is by adding
 
 Here, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`. This view will have a transition, drag controls and an exit button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
 ```swift
-// This creates a card that can be dragged, but can't be dismissed
-.slideOverCard(isPresented: $isPresented, dragToDismiss: false) {
-}
-
 // This creates a card that can't be dragged
 .slideOverCard(isPresented: $isPresented, dragEnabled: false) {
+}
+
+// This creates a card that can be dragged, but can't be dismissed
+.slideOverCard(isPresented: $isPresented, dragToDismiss: false) {
 }
 
 // This creates a card with no exit button
