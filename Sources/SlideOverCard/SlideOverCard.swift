@@ -122,7 +122,7 @@ extension View {
         ZStack {
             self
             
-            // If the device is an iPad, present centered and resized view with alternative transition
+            // If device is an iPad, present centered and resized view with alternative transition
             let isiPad = UIDevice.current.userInterfaceIdiom == .pad
             
             if isPresented.wrappedValue {
