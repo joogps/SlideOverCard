@@ -1,4 +1,6 @@
-# SlideOverCard
+<h1> SlideOverCard
+  <img align="right" alt="Package icon" src="../assets/icon-small.png" width=74px>
+</h1>
 
 <p>
     <img src="https://img.shields.io/badge/iOS-14.0+-blue.svg" />
