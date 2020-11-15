@@ -44,6 +44,7 @@ public struct SlideOverCardView<Content:View>: View {
         }.padding(20)
         .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
                         .fill(Color(.systemGray6)))
+        .clipShape(RoundedRectangle(cornerRadius: 38.5, style: .continuous))
         .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
         .gesture(
             dragEnabled.wrappedValue ?
@@ -64,36 +65,27 @@ public struct SlideOverCardView<Content:View>: View {
     }
 }
 
-protocol SOCButton: ButtonStyle {
-    var foregroundColor: Color { get }
-    var backgroundColor: Color { get }
-}
-
-extension SOCButton {
+public struct SOCActionButton: ButtonStyle {
+    public init() {}
+    
     public func makeBody(configuration: Configuration) -> some View {
         HStack {
             Spacer()
             configuration.label
                 .font(Font.body.weight(.medium))
                 .padding(.vertical, 20)
-                .foregroundColor(foregroundColor)
+                .foregroundColor(.white)
             Spacer()
-        }.background(backgroundColor).cornerRadius(12).overlay(configuration.isPressed ? Color.black.opacity(0.2) : nil)
+        }.background(Color.accentColor).overlay(configuration.isPressed ? Color.black.opacity(0.2) : nil).cornerRadius(12)
     }
 }
 
-public struct SOCActionButton: SOCButton {
-    var foregroundColor: Color = .white
-    var backgroundColor: Color = .accentColor
-    
+public struct SOCAlternativeButton: ButtonStyle {
     public init() {}
-}
-
-public struct SOCAlternativeButton: SOCButton {
-    var foregroundColor: Color = .primary
-    var backgroundColor: Color = Color(.systemGray5)
     
-    public init() {}
+    public func makeBody(configuration: Configuration) -> some View {
+        SOCActionButton().makeBody(configuration: configuration).accentColor(Color(.systemGray5))
+    }
 }
 
 public struct SOCEmptyButton: ButtonStyle {
@@ -130,6 +122,9 @@ extension View {
         ZStack {
             self
             
+            // If the device is an iPad, present centered and resized view with alternative transition
+            let isiPad = UIDevice.current.userInterfaceIdiom == .pad
+            
             if isPresented.wrappedValue {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
@@ -138,26 +133,17 @@ extension View {
                 VStack {
                     Spacer()
                     
-                    // If the device is an iPad, present centered and resized view
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        SlideOverCardView(isPresented: isPresented,
-                                          onDismiss: onDismiss,
-                                          dragEnabled: dragEnabled,
-                                          dragToDismiss: dragToDismiss,
-                                          displayExitButton: displayExitButton) {
-                            content()
-                        }.aspectRatio(1.0, contentMode: .fit)
-                        Spacer()
-                    } else {
-                        SlideOverCardView(isPresented: isPresented,
-                                          onDismiss: onDismiss,
-                                          dragEnabled: dragEnabled,
-                                          dragToDismiss: dragToDismiss,
-                                          displayExitButton: displayExitButton) {
-                            content()
-                        }.padding(6)
-                    }
-                }.transition(.move(edge: .bottom))
+                    SlideOverCardView(isPresented: isPresented,
+                                      onDismiss: onDismiss,
+                                      dragEnabled: dragEnabled,
+                                      dragToDismiss: dragToDismiss,
+                                      displayExitButton: displayExitButton) {
+                        content()
+                    }.padding(isiPad ? 0 : 6).conditionalAspectRatio(isiPad, 1.0, contentMode: .fit)
+                    
+                    if isiPad { Spacer() }
+                }//.transition(.move(edge: .bottom))
+                .transition(isiPad ? AnyTransition.opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
                 .animation(.spring(response: 0.35, dampingFraction: 1))
                 .ignoresSafeArea(.container, edges: .bottom)
                 .zIndex(2)
@@ -166,10 +152,18 @@ extension View {
     }
     
     public func slideOverCard<Item:Identifiable, Content:View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping (Item) -> Content) -> some View {
-        return Group {
+        Group {
             if item.wrappedValue != nil {
                 let binding = Binding(get: { item.wrappedValue != nil }, set: { if !$0 { item.wrappedValue = nil } })
                 self.slideOverCard(isPresented: binding, onDismiss: onDismiss, dragEnabled: dragEnabled, dragToDismiss: dragToDismiss, displayExitButton: displayExitButton, content: { content(item.wrappedValue!) } )
+            } else { self }
+        }
+    }
+    
+    private func conditionalAspectRatio(_ apply: Bool, _ aspectRatio: CGFloat? = .none, contentMode: ContentMode) -> some View {
+        Group {
+            if apply {
+                self.aspectRatio(aspectRatio, contentMode: contentMode)
             } else { self }
         }
     }
@@ -210,7 +204,7 @@ struct SlideOverCard_Previews: PreviewProvider {
                     Spacer()
                     VStack {
                         Text("Large title").font(.system(size: 28, weight: .bold))
-                        Text("A nice and brief description").font(.system(size: 13))
+                        Text("A nice and brief description")
                     }
                     Spacer()
                 }

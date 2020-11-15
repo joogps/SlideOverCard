@@ -1,5 +1,5 @@
 <h1> SlideOverCard
-  <img align="right" alt="Package icon" src="../assets/icon-small.png" width=74px>
+  <img align="right" alt="Project logo" src="../assets/icon-small.png" width=74px>
 </h1>
 
 <p>
@@ -58,8 +58,14 @@ In case you want to execute code when the view is dismissed (either by the exit 
 
 Alternatively, you can add the card using a binding to an optional or even instantiate it by your own with `SlideOverCardView`. Please note that this way it won't be automatically positioned in the screen or have transitions.
 ```swift
-// This uses a binding to an optional object
+// This uses a binding to an optional object in a switch statement.
 .slideOverCard(item: $activeCard) { item in
+    switch item {
+        case .coolView:
+            CoolView()
+        default:
+            ..........
+    }
 }
 ```
 
@@ -74,7 +80,7 @@ if isPresented {
 
 ## Accessory views
  
-There are a few accessory views to enhance your card layout. The first one is the `SOCActionButton()` button style, which can be applied to any button to give it a default "primary action" look, based on the app's accent color. The `SOCAlternateButton()` style will reproduce the same design, but with gray. And `SOCEmptyButton()`  will create a regular, all-text "last option" kind of button. You can use them like this:
+This package also includes a few accessory views to enhance your card layout. The first one is the `SOCActionButton()` button style, which can be applied to any button to give it a default "primary action" look, based on the app's accent color. The `SOCAlternateButton()` style will reproduce the same design, but with gray. And `SOCEmptyButton()`  will create an all-text "last option" kind of button. You can use them like this:
 ```swift
 Button("Do something", action: { }).buttonStyle(SOCActionButton())
 ```
