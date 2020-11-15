@@ -12,9 +12,9 @@ public struct SlideOverCardView<Content:View>: View {
     
     let onDismiss: (() -> Void)?
     
-    var dragEnabled: Binding<Bool> = .constant(true)
-    var dragToDismiss: Binding<Bool> = .constant(true)
-    var displayExitButton: Binding<Bool> = .constant(true)
+    var dragEnabled: Binding<Bool>
+    var dragToDismiss: Binding<Bool>
+    var displayExitButton: Binding<Bool>
     
     let content: Content
     
