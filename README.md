@@ -24,7 +24,7 @@ This repository is a Swift package, so all you gotta do is search and include it
 
 ## Usage
 
-You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`
+You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`.
 ```swift
 .slideOverCard(isPresented: $isPresented) {
   // Here goes your awesome content
