@@ -24,7 +24,7 @@ This repository is a Swift package, so all you gotta do is search and include it
 
 ## Usage
 
-You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`.
+You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`:
 ```swift
 .slideOverCard(isPresented: $isPresented) {
   // Here goes your awesome content
@@ -46,7 +46,7 @@ Here, `$isPresented` is a boolean binding. This way you can dismiss the view any
 }
 ```
 
-In case you want to execute code when the view is dismissed (either by the exit button or drag controls), you can also set an optional `onDismiss` closure parameter.
+In case you want to execute code when the view is dismissed (either by the exit button or drag controls), you can also set an optional `onDismiss` closure parameter:
 
 ```swift
 // This card will print some text when dismissed
