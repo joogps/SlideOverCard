@@ -27,7 +27,7 @@ public struct SlideOverCardView<Content:View>: View {
         self.content = content()
     }
     
-    @State private var viewOffset: CGFloat = 0.0
+    @GestureState private var viewOffset: CGFloat = 0.0
     
     public var body: some View {
         VStack(alignment: .trailing, spacing: 0) {
@@ -49,17 +49,14 @@ public struct SlideOverCardView<Content:View>: View {
         .gesture(
             dragEnabled.wrappedValue ?
                 DragGesture()
-                .onChanged { gesture in
-                    withAnimation(nil) {
-                        viewOffset = gesture.translation.height
-                    }
+                .updating($viewOffset) { value, state, transaction in
+                    state = value.translation.height
                 }
-                .onEnded() { _ in
-                    if viewOffset > 175 && dragToDismiss.wrappedValue {
+                .onEnded() { value in
+                    if value.predictedEndTranslation.height > 175 && dragToDismiss.wrappedValue {
                         isPresented.wrappedValue = false
                         if (onDismiss != nil) { onDismiss!() }
                     }
-                    viewOffset = .zero
                 } : nil
         )
     }
