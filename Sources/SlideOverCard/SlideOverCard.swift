@@ -33,7 +33,7 @@ public struct SlideOverCardView<Content:View>: View {
         VStack(alignment: .trailing, spacing: 0) {
             if displayExitButton.wrappedValue {
                 Button(action: {
-                    withAnimation { isPresented.wrappedValue = false }
+                    isPresented.wrappedValue = false
                     if (onDismiss != nil) { onDismiss!() }
                 }) {
                     SOCExitButton()
@@ -50,16 +50,16 @@ public struct SlideOverCardView<Content:View>: View {
             dragEnabled.wrappedValue ?
                 DragGesture()
                 .onChanged { gesture in
-                    viewOffset = gesture.translation.height
+                    withAnimation(nil) {
+                        viewOffset = gesture.translation.height
+                    }
                 }
                 .onEnded() { _ in
-                    withAnimation {
-                        if viewOffset > 175 && dragToDismiss.wrappedValue {
-                            isPresented.wrappedValue = false
-                            if (onDismiss != nil) { onDismiss!() }
-                        }
-                        viewOffset = .zero
+                    if viewOffset > 175 && dragToDismiss.wrappedValue {
+                        isPresented.wrappedValue = false
+                        if (onDismiss != nil) { onDismiss!() }
                     }
+                    viewOffset = .zero
                 } : nil
         )
     }
@@ -130,6 +130,7 @@ extension View {
                     .ignoresSafeArea()
                     .transition(.opacity)
                     .zIndex(1)
+                
                 VStack {
                     Spacer()
                     
@@ -139,16 +140,15 @@ extension View {
                                       dragToDismiss: dragToDismiss,
                                       displayExitButton: displayExitButton) {
                         content()
-                    }.padding(isiPad ? 0 : 6).conditionalAspectRatio(isiPad, 1.0, contentMode: .fit)
+                    }.padding(isiPad ? 0 : 6)
+                    .conditionalAspectRatio(isiPad, 1.0, contentMode: .fit)
                     
                     if isiPad { Spacer() }
-                }//.transition(.move(edge: .bottom))
+                }.ignoresSafeArea(.container, edges: .bottom)
                 .transition(isiPad ? AnyTransition.opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
-                .animation(.spring(response: 0.35, dampingFraction: 1))
-                .ignoresSafeArea(.container, edges: .bottom)
                 .zIndex(2)
             }
-        }
+        }.animation(.spring(response: 0.35, dampingFraction: 1))
     }
     
     public func slideOverCard<Item:Identifiable, Content:View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping (Item) -> Content) -> some View {
@@ -186,7 +186,7 @@ struct SlideOverCard_Previews: PreviewProvider {
             ZStack {
                 Color(.systemBackground).ignoresSafeArea()
                 VStack {
-                    Button("Show card", action: { withAnimation { isPresented = true } })
+                    Button("Show card", action: { isPresented = true })
                     Toggle("Can be dragged", isOn: $canBeDragged)
                     Toggle("Can be dismissed", isOn: $canBeDismissed)
                     Toggle("Showing exit button", isOn: $showingExitButton)
