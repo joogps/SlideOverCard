@@ -10,7 +10,7 @@
     </a>
 </p>
 
-A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods and Apple Card setup, NFC scanning and more. It is specially great for setup interactions.
+A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods and Apple Card setup, NFC scanning, Wi-Fi password sharing and more. It is specially great for setup interactions.
 
 <p>
     <img alt="Clear Spaces demo" src="../assets/demo-clear-spaces.gif" height=400px>
