@@ -18,7 +18,7 @@ public struct SlideOverCardView<Content:View>: View {
     
     let content: Content
     
-    init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping () -> Content) {
+    public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping () -> Content) {
         self.isPresented = isPresented
         self.onDismiss = onDismiss
         self.dragEnabled = dragEnabled
