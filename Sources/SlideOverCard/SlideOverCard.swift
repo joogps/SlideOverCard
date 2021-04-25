@@ -7,121 +7,42 @@
 
 import SwiftUI
 
-public struct SlideOverCardView<Content:View>: View {
+public struct SlideOverCard<Content: View>: View {
     var isPresented: Binding<Bool>
-    
     let onDismiss: (() -> Void)?
-    
-    var dragEnabled: Binding<Bool>
-    var dragToDismiss: Binding<Bool>
-    var displayExitButton: Binding<Bool>
-    
+    var options: SOCOptions
     let content: Content
     
+    public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = [], content: @escaping () -> Content) {
+        self.isPresented = isPresented
+        self.onDismiss = onDismiss
+        self.options = options
+        self.content = content()
+    }
+    
+    @available(*, deprecated, message: "Replace option parameters with the new option set.")
     public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping () -> Content) {
         self.isPresented = isPresented
         self.onDismiss = onDismiss
-        self.dragEnabled = dragEnabled
-        self.dragToDismiss = dragToDismiss
-        self.displayExitButton = displayExitButton
+        
+        var options = SOCOptions()
+        if !dragEnabled.wrappedValue { options.insert(.disableDrag) }
+        if !dragToDismiss.wrappedValue { options.insert(.disableDragToDismiss) }
+        if !displayExitButton.wrappedValue { options.insert(.hideExitButton) }
+        
+        self.options = options
+        
         self.content = content()
     }
     
     @GestureState private var viewOffset: CGFloat = 0.0
     
-    public var body: some View {
-        VStack(alignment: .trailing, spacing: 0) {
-            if displayExitButton.wrappedValue {
-                Button(action: {
-                    isPresented.wrappedValue = false
-                    if (onDismiss != nil) { onDismiss!() }
-                }) {
-                    SOCExitButton()
-                }.frame(width: 24, height: 24)
-            }
-            content
-                .padding([.horizontal, displayExitButton.wrappedValue ? .bottom : .vertical], 14)
-        }.padding(20)
-        .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
-                        .fill(Color(.systemGray6)))
-        .clipShape(RoundedRectangle(cornerRadius: 38.5, style: .continuous))
-        .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
-        .gesture(
-            dragEnabled.wrappedValue ?
-                DragGesture()
-                .updating($viewOffset) { value, state, transaction in
-                    state = value.translation.height
-                }
-                .onEnded() { value in
-                    if value.predictedEndTranslation.height > 175 && dragToDismiss.wrappedValue {
-                        isPresented.wrappedValue = false
-                        if (onDismiss != nil) { onDismiss!() }
-                    }
-                } : nil
-        )
+    var isiPad: Bool {
+        UIDevice.current.userInterfaceIdiom == .pad
     }
-}
-
-public struct SOCActionButton: ButtonStyle {
-    public init() {}
-    
-    public func makeBody(configuration: Configuration) -> some View {
-        HStack {
-            Spacer()
-            configuration.label
-                .font(Font.body.weight(.medium))
-                .padding(.vertical, 20)
-                .foregroundColor(.white)
-            Spacer()
-        }.background(Color.accentColor).overlay(configuration.isPressed ? Color.black.opacity(0.2) : nil).cornerRadius(12)
-    }
-}
-
-public struct SOCAlternativeButton: ButtonStyle {
-    public init() {}
-    
-    public func makeBody(configuration: Configuration) -> some View {
-        SOCActionButton().makeBody(configuration: configuration).accentColor(Color(.systemGray5))
-    }
-}
-
-public struct SOCEmptyButton: ButtonStyle {
-    public init() {}
-    
-    public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(Font.body.weight(.bold))
-            .padding(.top, 18)
-            .foregroundColor(.accentColor)
-            .opacity(configuration.isPressed ? 0.5 : 1)
-    }
-}
-
-public struct SOCExitButton: View {
-    @Environment(\.colorScheme) var colorScheme
     
     public var body: some View {
         ZStack {
-            Circle()
-                .fill(Color(white: colorScheme == .dark ? 0.19 : 0.93))
-            Image(systemName: "xmark")
-                .resizable()
-                .scaledToFit()
-                .font(Font.body.weight(.bold))
-                .scaleEffect(0.416)
-                .foregroundColor(Color(white: colorScheme == .dark ? 0.62 : 0.51))
-        }
-    }
-}
-
-extension View {
-    public func slideOverCard<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
-        ZStack {
-            self
-            
-            // If device is an iPad, present centered and resized view with alternative transition
-            let isiPad = UIDevice.current.userInterfaceIdiom == .pad
-            
             if isPresented.wrappedValue {
                 Color.black.opacity(0.3)
                     .ignoresSafeArea()
@@ -131,16 +52,12 @@ extension View {
                 VStack {
                     Spacer()
                     
-                    SlideOverCardView(isPresented: isPresented,
-                                      onDismiss: onDismiss,
-                                      dragEnabled: dragEnabled,
-                                      dragToDismiss: dragToDismiss,
-                                      displayExitButton: displayExitButton) {
-                        content()
-                    }.padding(isiPad ? 0 : 6)
+                    card.padding(isiPad ? 0 : 6)
                     .conditionalAspectRatio(isiPad, 1.0, contentMode: .fit)
                     
-                    if isiPad { Spacer() }
+                    if isiPad {
+                        Spacer()
+                    }
                 }.ignoresSafeArea(.container, edges: .bottom)
                 .transition(isiPad ? AnyTransition.opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
                 .zIndex(2)
@@ -148,15 +65,57 @@ extension View {
         }.animation(.spring(response: 0.35, dampingFraction: 1))
     }
     
-    public func slideOverCard<Item:Identifiable, Content:View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping (Item) -> Content) -> some View {
-        let binding = Binding(get: { item.wrappedValue != nil }, set: { if !$0 { item.wrappedValue = nil } })
-        return ZStack {
-            self
-            self.slideOverCard(isPresented: binding, onDismiss: onDismiss, dragEnabled: dragEnabled, dragToDismiss: dragToDismiss, displayExitButton: displayExitButton, content: { content(item.wrappedValue!) } )
-        }
+    private var card: some View {
+        VStack(alignment: .trailing, spacing: 0) {
+            if !options.contains(.hideExitButton) {
+                Button(action: dismiss) {
+                    SOCExitButton()
+                }.frame(width: 24, height: 24)
+            }
+            
+            content
+                .padding([.horizontal, options.contains(.hideExitButton) ? .vertical : .bottom], 14)
+        }.padding(20)
+        .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
+                        .fill(Color(.systemGray6)))
+        .clipShape(RoundedRectangle(cornerRadius: 38.5, style: .continuous))
+        .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
+        .gesture(
+            options.contains(.disableDrag) ? nil :
+                DragGesture()
+                .updating($viewOffset) { value, state, transaction in
+                    state = value.translation.height
+                }
+                .onEnded() { value in
+                    if value.predictedEndTranslation.height > 175 && !options.contains(.disableDragToDismiss) {
+                        dismiss()
+                    }
+                }
+        )
     }
     
-    private func conditionalAspectRatio(_ apply: Bool, _ aspectRatio: CGFloat? = .none, contentMode: ContentMode) -> some View {
+    func dismiss() {
+        withAnimation {
+            isPresented.wrappedValue = false
+        }
+        if (onDismiss != nil) { onDismiss!() }
+    }
+}
+
+public struct SOCOptions: OptionSet {
+    public let rawValue: Int8
+    
+    public init(rawValue: Int8) {
+        self.rawValue = rawValue
+    }
+    
+    static let disableDrag = SOCOptions(rawValue: 1)
+    static let disableDragToDismiss = SOCOptions(rawValue: 1 << 1)
+    static let hideExitButton = SOCOptions(rawValue: 1 << 2)
+}
+
+extension View {
+    fileprivate func conditionalAspectRatio(_ apply: Bool, _ aspectRatio: CGFloat? = .none, contentMode: ContentMode) -> some View {
         Group {
             if apply {
                 self.aspectRatio(aspectRatio, contentMode: contentMode)
@@ -174,26 +133,36 @@ struct SlideOverCard_Previews: PreviewProvider {
     struct PreviewWrapper: View {
         @State var isPresented = true
         
-        @State var canBeDragged = true
-        @State var canBeDismissed = true
-        @State var showingExitButton = true
+        @State var disableDrag = false
+        @State var disableDragToDismiss = false
+        @State var hideExitButton = false
+        
+        var options: SOCOptions {
+            var options = SOCOptions()
+            if disableDrag { options.insert(.disableDrag) }
+            if disableDragToDismiss { options.insert(.disableDragToDismiss) }
+            if hideExitButton { options.insert(.hideExitButton) }
+            return options
+        }
         
         var body: some View {
             ZStack {
                 Color(.systemBackground).ignoresSafeArea()
                 VStack {
                     Button("Show card", action: { isPresented = true })
-                    Toggle("Can be dragged", isOn: $canBeDragged)
-                    Toggle("Can be dismissed", isOn: $canBeDismissed)
-                    Toggle("Showing exit button", isOn: $showingExitButton)
+                    Toggle("Disable drag", isOn: $disableDrag)
+                    Toggle("DIsable drag to dismiss", isOn: $disableDragToDismiss)
+                    Toggle("Hide exit button", isOn: $hideExitButton)
                 }
-            }.slideOverCard(isPresented: $isPresented, dragEnabled: $canBeDragged, dragToDismiss: $canBeDismissed, displayExitButton: $showingExitButton, content: {
-                PlaceholderContent()
+            }.slideOverCard(item: $isPresented, dragToDismiss: $disableDrag, content: {
+                PlaceholderContent(isPresented: $isPresented)
             })
         }
     }
     
     struct PlaceholderContent: View {
+        @Binding var isPresented: Bool
+        
         var body: some View {
             VStack(alignment: .center, spacing: 25) {
                 HStack {
@@ -211,8 +180,10 @@ struct SlideOverCard_Previews: PreviewProvider {
                 
                 VStack(spacing: 0) {
                     Button("Do something", action: {
+                        isPresented = false
                     }).buttonStyle(SOCActionButton())
                     Button("Just skip it", action: {
+                        isPresented = false
                     }).buttonStyle(SOCEmptyButton())
                 }
             }.frame(height: 480)
