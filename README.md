@@ -110,4 +110,4 @@ SOCManager.dismiss(isPresented: $isPresented)
 
 # Example
 
-The SwiftUI code for a demo view (which can be seen on the top portion of this page) can be found [here](https://github.com/joogps/SlideOverCard/blob/50e39e3ed2e7614d56c82231be5b2f1fa44a3311/Sources/SlideOverCard/SlideOverCard.swift#L169). It's an Xcode preview, and you can experience it right within the package folder, under **Swift Package Dependencies**, in your project.
+The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/76a1984235492d79448e8a858487c730cc0ce3fb/Sources/SlideOverCard/SlideOverCard.swift#L127). It's an Xcode preview, and you can experience it right within the package, under **Swift Package Dependencies**, in your project.
