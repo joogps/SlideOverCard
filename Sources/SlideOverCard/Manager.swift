@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SOCManager {
-    static func present<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = SOCOptions(), @ViewBuilder content: @escaping () -> Content) {
+    static func present<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = SOCOptions(), style: UIUserInterfaceStyle = .unspecified, @ViewBuilder content: @escaping () -> Content) {
         let rootCard = SlideOverCard(isPresented: isPresented, onDismiss: {
             dismiss(isPresented: isPresented)
         }, options: options, content: content)
@@ -16,16 +16,21 @@ struct SOCManager {
         let controller = UIHostingController(rootView: rootCard)
         controller.view.backgroundColor = .clear
         controller.modalPresentationStyle = .overFullScreen
+        controller.overrideUserInterfaceStyle = style
         
         UIApplication.shared.windows.first?.rootViewController?.present(controller, animated: false)
         DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
-            isPresented.wrappedValue = true
+            withAnimation {
+                isPresented.wrappedValue = true
+            }
         }
     }
 
     static func dismiss(isPresented: Binding<Bool>) {
-        isPresented.wrappedValue = false
-        DispatchQueue.main.asyncAfter(deadline: .now()+1.0) {
+        withAnimation {
+            isPresented.wrappedValue = false
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
             UIApplication.shared.windows.first?.rootViewController?.dismiss(animated: false)
         }
     }

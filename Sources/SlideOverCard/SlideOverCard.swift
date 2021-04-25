@@ -149,14 +149,17 @@ struct SlideOverCard_Previews: PreviewProvider {
             ZStack {
                 Color(.systemBackground).ignoresSafeArea()
                 VStack {
-                    Button("Show card", action: { isPresented = true })
+                    Button("Show card", action: {
+                        SOCManager.present(isPresented: $isPresented, content: {
+                            PlaceholderContent(isPresented: $isPresented)
+                        })
+                    })
+                    
                     Toggle("Disable drag", isOn: $disableDrag)
-                    Toggle("DIsable drag to dismiss", isOn: $disableDragToDismiss)
+                    Toggle("Disable drag to dismiss", isOn: $disableDragToDismiss)
                     Toggle("Hide exit button", isOn: $hideExitButton)
-                }
-            }.slideOverCard(item: $isPresented, dragToDismiss: $disableDrag, content: {
-                PlaceholderContent(isPresented: $isPresented)
-            })
+                }.padding()
+            }
         }
     }
     
@@ -165,14 +168,11 @@ struct SlideOverCard_Previews: PreviewProvider {
         
         var body: some View {
             VStack(alignment: .center, spacing: 25) {
-                HStack {
-                    Spacer()
-                    VStack {
-                        Text("Large title").font(.system(size: 28, weight: .bold))
-                        Text("A nice and brief description")
-                    }
-                    Spacer()
+                VStack {
+                    Text("Large title").font(.system(size: 28, weight: .bold))
+                    Text("A nice and brief description")
                 }
+                
                 ZStack {
                     RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(Color.gray)
                     Text("Content").foregroundColor(.white)
@@ -180,10 +180,10 @@ struct SlideOverCard_Previews: PreviewProvider {
                 
                 VStack(spacing: 0) {
                     Button("Do something", action: {
-                        isPresented = false
+                        SOCManager.dismiss(isPresented: $isPresented)
                     }).buttonStyle(SOCActionButton())
                     Button("Just skip it", action: {
-                        isPresented = false
+                        SOCManager.dismiss(isPresented: $isPresented)
                     }).buttonStyle(SOCEmptyButton())
                 }
             }.frame(height: 480)

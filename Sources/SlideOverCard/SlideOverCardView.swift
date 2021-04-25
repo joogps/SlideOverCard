@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@available(*, renamed: "SlideOverCard")
+@available(*, deprecated, renamed: "SlideOverCard")
 public struct SlideOverCardView<Content: View>: View {
     var isPresented: Binding<Bool>
     let onDismiss: (() -> Void)?

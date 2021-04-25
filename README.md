@@ -10,7 +10,7 @@
     </a>
 </p>
 
-A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods and Apple Card setup, NFC scanning, Wi-Fi password sharing and more. It is specially great for setup interactions.
+A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods, Apple Card and AirTag setup, NFC scanning, Wi-Fi password sharing and more. It is specially great for setup interactions.
 
 <p>
     <img alt="Clear Spaces demo" src="../assets/demo-clear-spaces.gif" height=400px>
@@ -24,7 +24,6 @@ _From left to right: SlideOverCard being used in [Clear Spaces](https://apps.app
 This repository is a Swift package, so all you gotta do is search and include it in your project under **File > Swift Package Manager**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
 
 ## Usage
-
 You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`:
 ```swift
 .slideOverCard(isPresented: $isPresented) {
@@ -34,16 +33,17 @@ You can add a card to your app in two different ways. The first one is by adding
 
 Here, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`. This view will have a transition, drag controls and an exit button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
 ```swift
-// This creates a card that can't be dragged
-.slideOverCard(isPresented: $isPresented, dragEnabled: false) {
+
+// This creates a card that can be dragged, but not dismissed by dragging
+.slideOverCard(isPresented: $isPresented, options: [.disableDragToDismiss]) {
 }
 
-// This creates a card that can be dragged, but can't be dismissed
-.slideOverCard(isPresented: $isPresented, dragToDismiss: false) {
+// This creates a card that can't be dragged or dismissed by dragging
+.slideOverCard(isPresented: $isPresented, options: [.disableDrag, .disableDragToDismiss]) {
 }
 
 // This creates a card with no exit button
-.slideOverCard(isPresented: $isPresented, displayExitButton: false) {
+.slideOverCard(isPresented: $isPresented, options: [.hideExitButton]) {
 }
 ```
 
@@ -52,16 +52,19 @@ In case you want to execute code when the view is dismissed (either by the exit 
 ```swift
 // This card will print some text when dismissed
 .slideOverCard(isPresented: $isPresented, onDismiss: {
-    print("I was dismissed")
+    print("I was dismissed.")
 }) {
+    // Here goes your amazing layout
 }
 ```
 
-Alternatively, you can add the card using a binding to an optional or even instantiate it by your own with `SlideOverCardView`. Please note that this way it won't be automatically positioned in the screen or have transitions.
+Alternatively, you can add the card using a binding to an optional enumeration. That will automatically animate the card between screen changes.
 ```swift
 // This uses a binding to an optional object in a switch statement
 .slideOverCard(item: $activeCard) { item in
     switch item {
+        case .welcomeView:
+            WelcomeView()
         case .loginView:
             LoginView()
         default:
@@ -70,17 +73,19 @@ Alternatively, you can add the card using a binding to an optional or even insta
 }
 ```
 
+You can even instantiate the card by your own by adding a `SlideOverCard` view to a ZStack.
 ```swift
 // Using the standalone view
-if isPresented {
-  SlideOverCardView(isPresented: $isPresented) {
-    // Here goes your super-duper cool content
-  }
+ZStack {
+    // This is the background of everything
+    
+    SlideOverCard(isPresented: $isPresented) {
+        // Here goes your super-duper cool screen
+    }
 }
 ```
 
 ## Accessory views
- 
 This package also includes a few accessory views to enhance your card layout. The first one is the `SOCActionButton()` button style, which can be applied to any button to give it a default "primary action" look, based on the app's accent color. The `SOCAlternativeButton()` style will reproduce the same design, but with gray. And `SOCEmptyButton()`  will create an all-text "last option" kind of button. You can use them like this:
 ```swift
 Button("Do something", action: {
@@ -89,6 +94,19 @@ Button("Do something", action: {
 ```
 
 There's also the `SOCExitButton()` view. This view will create the default exit button icon used for the card (based on https://github.com/joogps/ExitButton).
+
+## Manager
+If you want to add a card as an overlay to all content in the screen, including the tab and navigation bars, you should use the `SOCManager`. The manager helps you display a card as a transparent view controller overlay, therefore going past everything SwiftUI and below. To present this overlay, use:
+```swift
+SOCManager.present(isPresented: $isPresented) {
+    // Here goes that splendid card body
+}
+```
+
+And to dismiss, just call:
+```swift
+SOCManager.dismiss(isPresented: $isPresented)
+```
 
 # Example
 
