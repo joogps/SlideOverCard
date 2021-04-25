@@ -35,7 +35,9 @@ public struct SlideOverCardView<Content: View>: View {
         self.content = content()
     }
     
-    var body: some View {
-        SlideOverCard(isPresented: isPresented, onDismiss: onDismiss, options: options, content: content)
+    public var body: some View {
+        SlideOverCard(isPresented: isPresented, onDismiss: onDismiss, options: options, content: {
+            content
+        })
     }
 }
