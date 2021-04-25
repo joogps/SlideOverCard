@@ -150,15 +150,15 @@ struct SlideOverCard_Previews: PreviewProvider {
                 Color(.systemBackground).ignoresSafeArea()
                 VStack {
                     Button("Show card", action: {
-                        SOCManager.present(isPresented: $isPresented, content: {
-                            PlaceholderContent(isPresented: $isPresented)
-                        })
+                        isPresented = true
                     })
                     
                     Toggle("Disable drag", isOn: $disableDrag)
                     Toggle("Disable drag to dismiss", isOn: $disableDragToDismiss)
                     Toggle("Hide exit button", isOn: $hideExitButton)
                 }.padding()
+            }.slideOverCard(isPresented: $isPresented, options: options) {
+                PlaceholderContent(isPresented: $isPresented)
             }
         }
     }
@@ -180,10 +180,10 @@ struct SlideOverCard_Previews: PreviewProvider {
                 
                 VStack(spacing: 0) {
                     Button("Do something", action: {
-                        SOCManager.dismiss(isPresented: $isPresented)
+                        isPresented = false
                     }).buttonStyle(SOCActionButton())
                     Button("Just skip it", action: {
-                        SOCManager.dismiss(isPresented: $isPresented)
+                        isPresented = false
                     }).buttonStyle(SOCEmptyButton())
                 }
             }.frame(height: 480)

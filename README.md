@@ -73,7 +73,7 @@ Alternatively, you can add the card using a binding to an optional enumeration. 
 }
 ```
 
-You can even instantiate the card by your own by adding a `SlideOverCard` view to a ZStack.
+You can even instantiate a card by your own by adding a `SlideOverCard` view to a ZStack.
 ```swift
 // Using the standalone view
 ZStack {
@@ -96,7 +96,7 @@ Button("Do something", action: {
 There's also the `SOCExitButton()` view. This view will create the default exit button icon used for the card (based on https://github.com/joogps/ExitButton).
 
 ## Manager
-If you want to add a card as an overlay to all content in the screen, including the tab and navigation bars, you should use the `SOCManager`. The manager helps you display a card as a transparent view controller overlay, therefore going past everything SwiftUI and below. To present this overlay, use:
+If you want to show a card as an overlay to all content in the screen, including the tab and navigation bars, you should use the `SOCManager`. The manager helps you display a card as a transparent view controller that covers the screen, therefore going past your SwiftUI content. To present this overlay, use:
 ```swift
 SOCManager.present(isPresented: $isPresented) {
     // Here goes that splendid card body
