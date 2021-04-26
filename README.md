@@ -3,7 +3,7 @@
 </h1>
 
 <p>
-    <img src="https://img.shields.io/badge/iOS-14.0+-blue.svg" />
+    <img src="https://img.shields.io/badge/iOS-13.0+-blue.svg" />
     <img src="https://img.shields.io/badge/-SwiftUI-red.svg" />
     <a href="https://twitter.com/joogps">
         <img src="https://img.shields.io/badge/Contact-@joogps-lightgrey.svg?style=social&logo=twitter" alt="Twitter: @joogps" />
@@ -22,6 +22,8 @@ _From left to right: SlideOverCard being used in [Clear Spaces](https://apps.app
 
 ## Installation
 This repository is a Swift package, so all you gotta do is search and include it in your project under **File > Swift Package Manager**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
+
+If your app runs on iOS 13, you might find a problem with keyboard responsiveness and your layout. That's caused by a SwiftUI limitation, unfortunately, since the [`ignoresSafeArea`](https://developer.apple.com/documentation/swiftui/text/ignoressafearea(_:edges:)) modifier was introduced for the SwiftUI framework in the iOS 14 update.
 
 ## Usage
 You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`:
@@ -110,4 +112,4 @@ SOCManager.dismiss(isPresented: $isPresented)
 
 # Example
 
-The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/76a1984235492d79448e8a858487c730cc0ce3fb/Sources/SlideOverCard/SlideOverCard.swift#L127). It's an Xcode preview, and you can experience it right within the package, under **Swift Package Dependencies**, in your project.
+The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/32f848dcf182ca0be0176e23ba7a8248b0a915c8/Sources/SlideOverCard/SlideOverCard.swift#L128). It's an Xcode preview, and you can experience it right within the package, under **Swift Package Dependencies**, in your project.
