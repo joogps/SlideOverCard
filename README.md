@@ -23,7 +23,7 @@ _From left to right: SlideOverCard being used in [Clear Spaces](https://apps.app
 ## Installation
 This repository is a Swift package, so all you gotta do is search and include it in your project under **File > Swift Package Manager**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
 
-If your app runs on iOS 13, you might find a problem with keyboard responsiveness and your layout. That's caused by a SwiftUI limitation, unfortunately, since the [`ignoresSafeArea`](https://developer.apple.com/documentation/swiftui/text/ignoressafearea(_:edges:)) modifier was introduced for the SwiftUI framework in the iOS 14 update.
+If your app runs on iOS 13, you might find a problem with keyboard responsiveness in your layout. That's caused by a SwiftUI limitation, unfortunately, since the [`ignoresSafeArea`](https://developer.apple.com/documentation/swiftui/text/ignoressafearea(_:edges:)) modifier was only introduced for the SwiftUI framework in the iOS 14 update.
 
 ## Usage
 You can add a card to your app in two different ways. The first one is by adding a `.slideOverCard()` modifier, which works similarly to a `.sheet()`:
