@@ -45,24 +45,35 @@ public struct SlideOverCard<Content: View>: View {
         ZStack {
             if isPresented.wrappedValue {
                 Color.black.opacity(0.3)
-                    .ignoresSafeArea()
+                    .edgesIgnoringSafeArea(.all)
                     .transition(.opacity)
                     .zIndex(1)
                 
-                VStack {
-                    Spacer()
-                    
-                    card.padding(isiPad ? 0 : 6)
-                    .conditionalAspectRatio(isiPad, 1.0, contentMode: .fit)
-                    
-                    if isiPad {
-                        Spacer()
+                Group {
+                    if #available(iOS 14.0, *) {
+                        container
+                            .ignoresSafeArea(.container, edges: .bottom)
+                    } else {
+                        container
+                            .edgesIgnoringSafeArea(.bottom)
                     }
-                }.ignoresSafeArea(.container, edges: .bottom)
-                .transition(isiPad ? AnyTransition.opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
-                .zIndex(2)
+                }.transition(isiPad ? AnyTransition.opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
+                    .zIndex(2)
             }
         }.animation(.spring(response: 0.35, dampingFraction: 1))
+    }
+    
+    private var container: some View {
+        VStack {
+            Spacer()
+            
+            if isiPad {
+                card.aspectRatio(1.0, contentMode: .fit)
+                Spacer()
+            } else {
+                card
+            }
+        }
     }
     
     private var card: some View {
@@ -114,16 +125,6 @@ public struct SOCOptions: OptionSet {
     static let hideExitButton = SOCOptions(rawValue: 1 << 2)
 }
 
-extension View {
-    fileprivate func conditionalAspectRatio(_ apply: Bool, _ aspectRatio: CGFloat? = .none, contentMode: ContentMode) -> some View {
-        Group {
-            if apply {
-                self.aspectRatio(aspectRatio, contentMode: contentMode)
-            } else { self }
-        }
-    }
-}
-
 struct SlideOverCard_Previews: PreviewProvider {
     static var previews: some View {
         PreviewWrapper()
@@ -147,7 +148,7 @@ struct SlideOverCard_Previews: PreviewProvider {
         
         var body: some View {
             ZStack {
-                Color(.systemBackground).ignoresSafeArea()
+                Color(.systemBackground).edgesIgnoringSafeArea(.all)
                 VStack {
                     Button("Show card", action: {
                         isPresented = true
