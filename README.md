@@ -77,7 +77,7 @@ You can even instantiate a card by your own by adding a `SlideOverCard` view to 
 ```swift
 // Using the standalone view
 ZStack {
-    // This is the background of everything
+    Color.white
     
     SlideOverCard(isPresented: $isPresented) {
         // Here goes your super-duper cool screen
@@ -99,7 +99,7 @@ There's also the `SOCExitButton()` view. This view will create the default exit 
 If you want to show a card as an overlay to all content in the screen, including the tab and navigation bars, you should use the `SOCManager`. The manager helps you display a card as a transparent view controller that covers the screen, therefore going past your SwiftUI content. To present this overlay, use:
 ```swift
 SOCManager.present(isPresented: $isPresented) {
-    // Here goes that splendid card body
+    // Here goes your design masterpiece
 }
 ```
 
