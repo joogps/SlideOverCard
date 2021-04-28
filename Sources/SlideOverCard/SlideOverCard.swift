@@ -120,9 +120,9 @@ public struct SOCOptions: OptionSet {
         self.rawValue = rawValue
     }
     
-    static let disableDrag = SOCOptions(rawValue: 1)
-    static let disableDragToDismiss = SOCOptions(rawValue: 1 << 1)
-    static let hideExitButton = SOCOptions(rawValue: 1 << 2)
+    public static let disableDrag = SOCOptions(rawValue: 1)
+    public static let disableDragToDismiss = SOCOptions(rawValue: 1 << 1)
+    public static let hideExitButton = SOCOptions(rawValue: 1 << 2)
 }
 
 struct SlideOverCard_Previews: PreviewProvider {

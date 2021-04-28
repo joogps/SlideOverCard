@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct SOCManager {
-    static func present<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = SOCOptions(), style: UIUserInterfaceStyle = .unspecified, @ViewBuilder content: @escaping () -> Content) {
+public struct SOCManager {
+    public static func present<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = SOCOptions(), style: UIUserInterfaceStyle = .unspecified, @ViewBuilder content: @escaping () -> Content) {
         let rootCard = SlideOverCard(isPresented: isPresented, onDismiss: {
             dismiss(isPresented: isPresented)
         }, options: options, content: content)
@@ -26,7 +26,7 @@ struct SOCManager {
         }
     }
 
-    static func dismiss(isPresented: Binding<Bool>) {
+    public static func dismiss(isPresented: Binding<Bool>) {
         withAnimation {
             isPresented.wrappedValue = false
         }
