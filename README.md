@@ -18,7 +18,7 @@ A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods, App
     <img alt="Example preview demo" src="../assets/demo-example.gif" height=400px>
 </p>
 
-_From left to right: SlideOverCard being used in [Clear Spaces](https://apps.apple.com/us/app/clear-spaces/id1532666619), a QR code scanner prompt (made with https://github.com/twostraws/CodeScanner) and a demo of the project's Xcode preview_
+_From left to right: SlideOverCard being used in [Clear Spaces](https://apps.apple.com/us/app/clear-spaces/id1532666619), a QR code scanner prompt (made with [CodeScanner](https://github.com/twostraws/CodeScanner)) and a demo of the project's Xcode preview_
 
 ## Installation
 This repository is a Swift package, so all you gotta do is search and include it in your project under **File > Swift Package Manager**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
@@ -112,4 +112,4 @@ SOCManager.dismiss(isPresented: $isPresented)
 
 # Example
 
-The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/32f848dcf182ca0be0176e23ba7a8248b0a915c8/Sources/SlideOverCard/SlideOverCard.swift#L128). It's an Xcode preview, and you can experience it right within the package, under **Swift Package Dependencies**, in your project.
+The SwiftUI code for a demo view can be found [here](https://github.com/joogps/SlideOverCard/blob/f6cb0e2bac67555fd74cdadf3e6ca542538f0c23/Sources/SlideOverCard/SlideOverCard.swift#L128). It's an Xcode preview, and you can experience it right within the package, under **Swift Package Dependencies**, in your project.
