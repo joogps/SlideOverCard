@@ -21,7 +21,7 @@ A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods, App
 _From left to right: SlideOverCard being used in [Clear Spaces](https://apps.apple.com/us/app/clear-spaces/id1532666619), a QR code scanner prompt (made with [CodeScanner](https://github.com/twostraws/CodeScanner)) and a demo of the project's Xcode preview_
 
 ## Installation
-This repository is a Swift package, so all you gotta do is search and include it in your project under **File > Swift Package Manager**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
+This repository is a Swift package, so all you gotta do is paste the repository link and include it in your project under **File > Add packages**. Then, just add `import SlideOverCard` to the files where this package will be referenced and you're good to go!
 
 If your app runs on iOS 13, you might find a problem with keyboard responsiveness in your layout. That's caused by a SwiftUI limitation, unfortunately, since the [`ignoresSafeArea`](https://developer.apple.com/documentation/swiftui/text/ignoressafearea(_:edges:)) modifier was only introduced for the SwiftUI framework in the iOS 14 update.
 
