@@ -12,11 +12,13 @@ public struct SlideOverCard<Content: View>: View {
     let onDismiss: (() -> Void)?
     var options: SOCOptions
     let content: Content
+    let backgroundColor: Color
     
-    public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = [], content: @escaping () -> Content) {
+    public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = [], backgroundColor: Color = Color(.systemGray6), content: @escaping () -> Content) {
         self.isPresented = isPresented
         self.onDismiss = onDismiss
         self.options = options
+        self.backgroundColor = backgroundColor
         self.content = content()
     }
     
@@ -31,7 +33,7 @@ public struct SlideOverCard<Content: View>: View {
         if !displayExitButton.wrappedValue { options.insert(.hideExitButton) }
         
         self.options = options
-        
+        self.backgroundColor = Color(.systemGray6)
         self.content = content()
     }
     
@@ -88,7 +90,7 @@ public struct SlideOverCard<Content: View>: View {
                 .padding([.horizontal, options.contains(.hideExitButton) ? .vertical : .bottom], 14)
         }.padding(20)
         .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
-                        .fill(Color(.systemGray6)))
+                        .fill(backgroundColor))
         .clipShape(RoundedRectangle(cornerRadius: 38.5, style: .continuous))
         .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
         .gesture(
