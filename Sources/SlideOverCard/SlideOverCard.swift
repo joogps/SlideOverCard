@@ -7,33 +7,23 @@
 
 import SwiftUI
 
-public struct SlideOverCard<Content: View>: View {
+/// A view that presents a card that slides over from the bottom of the screen
+public struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
     var isPresented: Binding<Bool>
     let onDismiss: (() -> Void)?
     var options: SOCOptions
+    let style: SOCStyle<Style>
     let content: Content
-    let backgroundColor: Color
     
-    public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = [], backgroundColor: Color = Color(.systemGray6), content: @escaping () -> Content) {
+    public init(isPresented: Binding<Bool>,
+                onDismiss: (() -> Void)? = nil,
+                options: SOCOptions = [],
+                style: SOCStyle<Style> = SOCStyle(),
+                content: @escaping () -> Content) {
         self.isPresented = isPresented
         self.onDismiss = onDismiss
         self.options = options
-        self.backgroundColor = backgroundColor
-        self.content = content()
-    }
-    
-    @available(*, deprecated, message: "Replace option parameters with the new option set.")
-    public init(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), content: @escaping () -> Content) {
-        self.isPresented = isPresented
-        self.onDismiss = onDismiss
-        
-        var options = SOCOptions()
-        if !dragEnabled.wrappedValue { options.insert(.disableDrag) }
-        if !dragToDismiss.wrappedValue { options.insert(.disableDragToDismiss) }
-        if !displayExitButton.wrappedValue { options.insert(.hideExitButton) }
-        
-        self.options = options
-        self.backgroundColor = Color(.systemGray6)
+        self.style = style
         self.content = content()
     }
     
@@ -59,7 +49,7 @@ public struct SlideOverCard<Content: View>: View {
                         container
                             .edgesIgnoringSafeArea(.bottom)
                     }
-                }.transition(isiPad ? AnyTransition.opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
+                }.transition(isiPad ? .opacity.combined(with: .offset(x: 0, y: 200)) : .move(edge: .bottom))
                     .zIndex(2)
             }
         }.animation(.spring(response: 0.35, dampingFraction: 1))
@@ -78,21 +68,29 @@ public struct SlideOverCard<Content: View>: View {
         }
     }
     
+    private var cardShape: some Shape {
+        RoundedRectangle(cornerSize: style.cornerSize, style: .continuous)
+    }
+    
     private var card: some View {
         VStack(alignment: .trailing, spacing: 0) {
-            if !options.contains(.hideExitButton) {
+            if !options.contains(.hideDismissButton) {
                 Button(action: dismiss) {
-                    SOCExitButton()
+                    SOCDismissButton()
                 }.frame(width: 24, height: 24)
             }
             
-            content
-                .padding([.horizontal, options.contains(.hideExitButton) ? .vertical : .bottom], 14)
-        }.padding(20)
-        .background(RoundedRectangle(cornerRadius: 38.5, style: .continuous)
-                        .fill(backgroundColor))
-        .clipShape(RoundedRectangle(cornerRadius: 38.5, style: .continuous))
+            HStack {
+                Spacer()
+                content
+                    .padding([.horizontal, options.contains(.hideDismissButton) ? .vertical : .bottom], 14)
+                Spacer()
+            }
+        }.padding(style.innerPadding)
+        .background(cardShape.fill(style.style))
+        .clipShape(cardShape)
         .offset(x: 0, y: viewOffset/pow(2, abs(viewOffset)/500+1))
+        .padding(style.outerPadding)
         .gesture(
             options.contains(.disableDrag) ? nil :
                 DragGesture()
@@ -105,16 +103,70 @@ public struct SlideOverCard<Content: View>: View {
                     }
                 }
         )
+        
     }
     
     func dismiss() {
+        if let onDismiss {
+            onDismiss()
+        }
         withAnimation {
             isPresented.wrappedValue = false
         }
-        if (onDismiss != nil) { onDismiss!() }
     }
 }
 
+extension SlideOverCard where Style == Color {
+    public init(isPresented: Binding<Bool>,
+                onDismiss: (() -> Void)? = nil,
+                options: SOCOptions = [],
+                content: @escaping () -> Content) {
+        self.isPresented = isPresented
+        self.onDismiss = onDismiss
+        self.options = options
+        self.style = SOCStyle()
+        self.content = content()
+    }
+}
+
+/// A struct thtat defines the style of a `SlideOverCard`
+public struct SOCStyle<S: ShapeStyle> {
+    /// Initialize a style with a single value for corner radius
+    public init(corners: CGFloat = 38.5,
+                continuous: Bool = true,
+                innerPadding: CGFloat = 20.0,
+                outerPadding: CGFloat = 6.0,
+                style: S = Color(.systemGray6)) {
+        self.init(corners: CGSize(width: corners, height: corners),
+                  continuous: continuous,
+                  innerPadding: innerPadding,
+                  outerPadding: outerPadding,
+                  style: style)
+    }
+    
+    /// Initialize a style with a custom corner size
+    public init(corners: CGSize,
+                continuous: Bool = true,
+                innerPadding: CGFloat = 20.0,
+                outerPadding: CGFloat = 6.0,
+                  style: S = Color(.systemGray6)) {
+        self.cornerSize = corners
+        self.continuous = continuous
+        self.innerPadding = innerPadding
+        self.outerPadding = outerPadding
+        self.style = style
+    }
+    
+    let cornerSize: CGSize
+    let continuous: Bool
+    
+    let innerPadding: CGFloat
+    let outerPadding: CGFloat
+    
+    let style: S
+}
+
+/// A structure that defines interaction options of a `SlideOverCard`
 public struct SOCOptions: OptionSet {
     public let rawValue: Int8
     
@@ -122,74 +174,10 @@ public struct SOCOptions: OptionSet {
         self.rawValue = rawValue
     }
     
+    /// Disable dragging of the card completely, keeping it static
     public static let disableDrag = SOCOptions(rawValue: 1)
+    /// Disable the ability of dismissing the card by dragging it down
     public static let disableDragToDismiss = SOCOptions(rawValue: 1 << 1)
-    public static let hideExitButton = SOCOptions(rawValue: 1 << 2)
-}
-
-struct SlideOverCard_Previews: PreviewProvider {
-    static var previews: some View {
-        PreviewWrapper()
-        PreviewWrapper().environment(\.colorScheme, .dark)
-    }
-    
-    struct PreviewWrapper: View {
-        @State var isPresented = true
-        
-        @State var disableDrag = false
-        @State var disableDragToDismiss = false
-        @State var hideExitButton = false
-        
-        var options: SOCOptions {
-            var options = SOCOptions()
-            if disableDrag { options.insert(.disableDrag) }
-            if disableDragToDismiss { options.insert(.disableDragToDismiss) }
-            if hideExitButton { options.insert(.hideExitButton) }
-            return options
-        }
-        
-        var body: some View {
-            ZStack {
-                Color(.systemBackground).edgesIgnoringSafeArea(.all)
-                VStack {
-                    Button("Show card", action: {
-                        isPresented = true
-                    })
-                    
-                    Toggle("Disable drag", isOn: $disableDrag)
-                    Toggle("Disable drag to dismiss", isOn: $disableDragToDismiss)
-                    Toggle("Hide exit button", isOn: $hideExitButton)
-                }.padding()
-            }.slideOverCard(isPresented: $isPresented, options: options) {
-                PlaceholderContent(isPresented: $isPresented)
-            }
-        }
-    }
-    
-    struct PlaceholderContent: View {
-        @Binding var isPresented: Bool
-        
-        var body: some View {
-            VStack(alignment: .center, spacing: 25) {
-                VStack {
-                    Text("Large title").font(.system(size: 28, weight: .bold))
-                    Text("A nice and brief description")
-                }
-                
-                ZStack {
-                    RoundedRectangle(cornerRadius: 25.0, style: .continuous).fill(Color.gray)
-                    Text("Content").foregroundColor(.white)
-                }
-                
-                VStack(spacing: 0) {
-                    Button("Do something", action: {
-                        isPresented = false
-                    }).buttonStyle(SOCActionButton())
-                    Button("Just skip it", action: {
-                        isPresented = false
-                    }).buttonStyle(SOCEmptyButton())
-                }
-            }.frame(height: 480)
-        }
-    }
+    /// Hide the default dismiss button
+    public static let hideDismissButton = SOCOptions(rawValue: 1 << 2)
 }

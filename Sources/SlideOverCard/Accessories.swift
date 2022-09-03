@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+/// A button style that represents a main action in a `SlideOverCard`
 public struct SOCActionButton: ButtonStyle {
     let textColor: Color
     public init(textColor: Color = .white) {
@@ -25,6 +26,7 @@ public struct SOCActionButton: ButtonStyle {
     }
 }
 
+/// A button style that represents an alternative action in a `SlideOverCard`
 public struct SOCAlternativeButton: ButtonStyle {
     public init() {}
     
@@ -33,6 +35,7 @@ public struct SOCAlternativeButton: ButtonStyle {
     }
 }
 
+/// A button style with no background and tinted text in a `SlideOverCard`
 public struct SOCEmptyButton: ButtonStyle {
     public init() {}
     
@@ -45,7 +48,8 @@ public struct SOCEmptyButton: ButtonStyle {
     }
 }
 
-public struct SOCExitButton: View {
+/// A round button that triggers the dismissal of a `SlideOverCard`
+public struct SOCDismissButton: View {
     @Environment(\.colorScheme) var colorScheme
     
     public var body: some View {
@@ -68,7 +72,7 @@ struct Acessories_Previews: PreviewProvider {
             Button("Action") {}.buttonStyle(SOCActionButton())
             Button("Alternative") {}.buttonStyle(SOCAlternativeButton())
             Button("Empty") {}.buttonStyle(SOCEmptyButton())
-            SOCExitButton()
+            SOCDismissButton()
         }.previewLayout(.sizeThatFits)
     }
 }

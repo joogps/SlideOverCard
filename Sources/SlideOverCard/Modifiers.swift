@@ -8,33 +8,51 @@
 import SwiftUI
 
 extension View {
-    public func slideOverCard<Content: View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = [], backgroundColor: Color = Color(.systemGray6), @ViewBuilder content: @escaping () -> Content) -> some View {
+    /// Present a `SlideOverCard` with a boolean binding
+    public func slideOverCard<Content: View, Style: ShapeStyle>(isPresented: Binding<Bool>,
+                                             onDismiss: (() -> Void)? = nil,
+                                             options: SOCOptions = [],
+                                             style: SOCStyle<Style> = SOCStyle(),
+                                             @ViewBuilder content: @escaping () -> Content) -> some View {
         return ZStack {
             self
             SlideOverCard(isPresented: isPresented,
                           onDismiss: onDismiss,
                           options: options,
-                          backgroundColor: backgroundColor) {
+                          style: style) {
                 content()
             }
         }
     }
     
-    public func slideOverCard<Item: Identifiable, Content: View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil, options: SOCOptions = [], backgroundColor: Color = Color(.systemGray6), @ViewBuilder content: @escaping (Item) -> Content) -> some View {
+    /// Present a `SlideOverCard` with a boolean optional
+    public func slideOverCard<Item: Identifiable, Content: View, Style: ShapeStyle>(item: Binding<Item?>,
+                                                                 onDismiss: (() -> Void)? = nil,
+                                                                 options: SOCOptions = [],
+                                                                 style: SOCStyle<Style> = SOCStyle(),
+                                                                 @ViewBuilder content: @escaping (Item) -> Content) -> some View {
         let binding = Binding(get: { item.wrappedValue != nil }, set: { if !$0 { item.wrappedValue = nil } })
-        return self.slideOverCard(isPresented: binding, onDismiss: onDismiss, options: options, backgroundColor: backgroundColor, content: {
+        return self.slideOverCard(isPresented: binding,
+                                  onDismiss: onDismiss,
+                                  options: options,
+                                  style: style) {
             if let item = item.wrappedValue {
                 content(item)
             }
-        })
+        }
     }
     
     @available(*, deprecated, message: "Replace option parameters with the new option set.")
-    public func slideOverCard<Content: View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping () -> Content) -> some View {
+    public func slideOverCard<Content: View>(isPresented: Binding<Bool>,
+                                             onDismiss: (() -> Void)? = nil,
+                                             dragEnabled: Binding<Bool> = .constant(true),
+                                             dragToDismiss: Binding<Bool> = .constant(true),
+                                             displayExitButton: Binding<Bool> = .constant(true),
+                                             @ViewBuilder content: @escaping () -> Content) -> some View {
         var options = SOCOptions()
         if !dragEnabled.wrappedValue { options.insert(.disableDrag) }
         if !dragToDismiss.wrappedValue { options.insert(.disableDragToDismiss) }
-        if !displayExitButton.wrappedValue { options.insert(.hideExitButton) }
+        if !displayExitButton.wrappedValue { options.insert(.hideDismissButton) }
         
         return ZStack {
             self
@@ -47,12 +65,20 @@ extension View {
     }
     
     @available(*, deprecated, message: "Replace option parameters with the new option set.")
-    public func slideOverCard<Item: Identifiable, Content: View>(item: Binding<Item?>, onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true), dragToDismiss: Binding<Bool> = .constant(true), displayExitButton: Binding<Bool> = .constant(true), @ViewBuilder content: @escaping (Item) -> Content) -> some View {
+    public func slideOverCard<Item: Identifiable, Content: View>(item: Binding<Item?>,
+                                                                 onDismiss: (() -> Void)? = nil, dragEnabled: Binding<Bool> = .constant(true),
+                                                                 dragToDismiss: Binding<Bool> = .constant(true),
+                                                                 displayExitButton: Binding<Bool> = .constant(true),
+                                                                 @ViewBuilder content: @escaping (Item) -> Content) -> some View {
         let binding = Binding(get: { item.wrappedValue != nil }, set: { if !$0 { item.wrappedValue = nil } })
-        return self.slideOverCard(isPresented: binding, onDismiss: onDismiss, dragEnabled: dragEnabled, dragToDismiss: dragToDismiss, displayExitButton: displayExitButton, content: {
+        return self.slideOverCard(isPresented: binding,
+                                  onDismiss: onDismiss,
+                                  dragEnabled: dragEnabled,
+                                  dragToDismiss: dragToDismiss,
+                                  displayExitButton: displayExitButton) {
             if let item = item.wrappedValue {
                 content(item)
             }
-        })
+        }
     }
 }
