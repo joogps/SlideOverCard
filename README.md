@@ -33,7 +33,7 @@ You can add a card to your app in two different ways. The first one is by adding
 }
 ```
 
-Here, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`. This view will have a transition, drag controls and an exit button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
+Here, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`. This view will have a transition, drag controls and a dismiss button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
 ```swift
 
 // This creates a card that can be dragged, but not dismissed by dragging
@@ -45,7 +45,7 @@ Here, `$isPresented` is a boolean binding. This way you can dismiss the view any
 }
 
 // This creates a card with no exit button
-.slideOverCard(isPresented: $isPresented, options: [.hideExitButton]) {
+.slideOverCard(isPresented: $isPresented, options: [.hideDismissButton]) {
 }
 ```
 
@@ -95,7 +95,7 @@ Button("Do something", action: {
 }).buttonStyle(SOCActionButton())
 ```
 
-There's also the `SOCExitButton()` view. This view will create the default exit button icon used for the card (based on https://github.com/joogps/ExitButton).
+There's also the `SOCDismissButton()` view. This view will create the default dismiss button icon used for the card (based on https://github.com/joogps/ExitButton).
 
 ## Manager
 If you want to show a card as an overlay to all content in the screen, including the tab and navigation bars, you should use the `SOCManager`. The manager helps you display a card as a transparent view controller that covers the screen, therefore going past your SwiftUI content. To present this overlay, use:

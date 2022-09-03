@@ -7,17 +7,24 @@
 
 import SwiftUI
 
+/// Present a `SlideOverCard` from anywhere in your app
 public struct SOCManager {
     @available(iOSApplicationExtension, unavailable)
-    public static func present<Content:View>(isPresented: Binding<Bool>, onDismiss: (() -> Void)? = nil, options: SOCOptions = SOCOptions(), style: UIUserInterfaceStyle = .unspecified, @ViewBuilder content: @escaping () -> Content) {
-        let rootCard = SlideOverCard(isPresented: isPresented, onDismiss: {
+    public static func present<Content: View, Style: ShapeStyle>(isPresented: Binding<Bool>,
+                                             onDismiss: (() -> Void)? = nil,
+                                             options: SOCOptions = SOCOptions(),
+                                             style: SOCStyle<Style> = SOCStyle(),
+                                             colorScheme: UIUserInterfaceStyle = .unspecified,
+                                             @ViewBuilder content: @escaping () -> Content) {
+        let rootCard = SlideOverCard(isPresented: isPresented,
+                                     onDismiss: {
             dismiss(isPresented: isPresented)
-        }, options: options, content: content)
+        }, options: options, style: style, content: content)
         
         let controller = UIHostingController(rootView: rootCard)
         controller.view.backgroundColor = .clear
         controller.modalPresentationStyle = .overFullScreen
-        controller.overrideUserInterfaceStyle = style
+        controller.overrideUserInterfaceStyle = colorScheme
         
         UIApplication.shared.windows.first?.rootViewController?.present(controller, animated: false)
         DispatchQueue.main.asyncAfter(deadline: .now()+0.1) {
@@ -27,6 +34,7 @@ public struct SOCManager {
         }
     }
     
+    /// Dismiss a `SlideOverCard`
     @available(iOSApplicationExtension, unavailable)
     public static func dismiss(isPresented: Binding<Bool>) {
         withAnimation {
