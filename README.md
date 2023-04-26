@@ -53,12 +53,13 @@ This view will have a transition, drag controls and a dismiss button set by defa
 }
 ```
 
-If you want to change styling attributes of the card, such as the **corner size**, the **corner style**, the **inner and outer paddings** and the **shape fill style**, such as a gradient, just specify a custom `SOCStyle` struct.
+If you want to change styling attributes of the card, such as the **corner size**, the **corner style**, the **inner and outer paddings**, the  **dimming opacity** and the **shape fill style**, such as a gradient, just specify a custom `SOCStyle` struct.
 
 ```swift
 .slideOverCard(isPresented: $isPresented, style: SOCStyle(corners: 24.0,
                                                         continuous: false,
                                                         innerPadding: 16.0, outerPadding: 4.0,
+                                                        dimmingOpacity: 0.1,
                                                         style: .black)) {
 }
 ```

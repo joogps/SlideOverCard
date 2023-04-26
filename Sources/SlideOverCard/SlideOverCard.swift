@@ -36,7 +36,7 @@ public struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
     public var body: some View {
         ZStack {
             if isPresented.wrappedValue {
-                Color.black.opacity(0.3)
+                Color.black.opacity(style.dimmingOpacity)
                     .edgesIgnoringSafeArea(.all)
                     .transition(.opacity)
                     .zIndex(1)
@@ -136,11 +136,13 @@ public struct SOCStyle<S: ShapeStyle> {
                 continuous: Bool = true,
                 innerPadding: CGFloat = 20.0,
                 outerPadding: CGFloat = 6.0,
+                dimmingOpacity: CGFloat = 0.3,
                 style: S = Color(.systemGray6)) {
         self.init(corners: CGSize(width: corners, height: corners),
                   continuous: continuous,
                   innerPadding: innerPadding,
                   outerPadding: outerPadding,
+                  dimmingOpacity: dimmingOpacity,
                   style: style)
     }
     
@@ -149,11 +151,13 @@ public struct SOCStyle<S: ShapeStyle> {
                 continuous: Bool = true,
                 innerPadding: CGFloat = 20.0,
                 outerPadding: CGFloat = 6.0,
+                dimmingOpacity: CGFloat = 0.3,
                   style: S = Color(.systemGray6)) {
         self.cornerSize = corners
         self.continuous = continuous
         self.innerPadding = innerPadding
         self.outerPadding = outerPadding
+        self.dimmingOpacity = dimmingOpacity
         self.style = style
     }
     
@@ -162,6 +166,8 @@ public struct SOCStyle<S: ShapeStyle> {
     
     let innerPadding: CGFloat
     let outerPadding: CGFloat
+
+    let dimmingOpacity: CGFloat
     
     let style: S
 }
