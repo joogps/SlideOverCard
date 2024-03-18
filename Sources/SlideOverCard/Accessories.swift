@@ -22,7 +22,10 @@ public struct SOCActionButton: ButtonStyle {
                 .padding(.vertical, 20)
                 .foregroundColor(textColor)
             Spacer()
-        }.background(Color.accentColor).overlay(configuration.isPressed ? Color.black.opacity(0.2) : nil).cornerRadius(12)
+        }
+        .background(Color.accentColor)
+        .overlay(configuration.isPressed ? Color.black.opacity(0.2) : nil)
+        .cornerRadius(12)
     }
 }
 
@@ -55,12 +58,9 @@ public struct SOCDismissButton: View {
     public var body: some View {
         ZStack {
             Circle()
-                .fill(Color(white: colorScheme == .dark ? 0.19 : 0.93))
+                .fill(Color(white: colorScheme == .dark ? 0.19 : 0.89))
             Image(systemName: "xmark")
-                .resizable()
-                .scaledToFit()
-                .font(Font.body.weight(.bold))
-                .scaleEffect(0.416)
+                .font(.system(size: 13.0, weight: .bold))
                 .foregroundColor(Color(white: colorScheme == .dark ? 0.62 : 0.51))
         }
     }
@@ -69,9 +69,21 @@ public struct SOCDismissButton: View {
 struct Acessories_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            Button("Action") {}.buttonStyle(SOCActionButton())
-            Button("Alternative") {}.buttonStyle(SOCAlternativeButton())
-            Button("Empty") {}.buttonStyle(SOCEmptyButton())
+            Button("Action") {
+                
+            }
+            .buttonStyle(SOCActionButton())
+            
+            Button("Alternative") {
+                
+            }
+            .buttonStyle(SOCAlternativeButton())
+            
+            Button("Empty") {
+                
+            }
+            .buttonStyle(SOCEmptyButton())
+            
             SOCDismissButton()
         }.previewLayout(.sizeThatFits)
     }
