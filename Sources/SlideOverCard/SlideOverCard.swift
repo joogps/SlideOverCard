@@ -7,16 +7,16 @@
 
 import SwiftUI
 
-/// A view that presents a card that slides over from the bottom of the screen
+/// A view that displays a card that slides over from the bottom of the screen
 @available(*, deprecated, message: "Use the 'slideOverCard(_:)' modifier instead.")
-public struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
+internal struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
     @ObservedObject var model: SOCModel
     
     var options: SOCOptions
     let style: SOCStyle<Style>
     let content: Content
     
-    public init(model: ObservedObject<SOCModel>,
+    init(model: ObservedObject<SOCModel>,
                 options: SOCOptions = [],
                 style: SOCStyle<Style> = SOCStyle(),
                 content: @escaping () -> Content) {
@@ -125,7 +125,7 @@ public struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
 }
 
 extension SlideOverCard where Style == Color {
-    public init(model: ObservedObject<SOCModel>,
+    internal init(model: ObservedObject<SOCModel>,
                 options: SOCOptions = [],
                 content: @escaping () -> Content) {
         self._model = model

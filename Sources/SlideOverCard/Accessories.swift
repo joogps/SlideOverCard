@@ -10,6 +10,7 @@ import SwiftUI
 /// A button style that represents a main action in a `SlideOverCard`
 public struct SOCActionButton: ButtonStyle {
     let textColor: Color
+    
     public init(textColor: Color = .white) {
         self.textColor = textColor
     }
@@ -31,7 +32,9 @@ public struct SOCActionButton: ButtonStyle {
 
 /// A button style that represents an alternative action in a `SlideOverCard`
 public struct SOCAlternativeButton: ButtonStyle {
-    public init() {}
+    public init() {
+        
+    }
     
     public func makeBody(configuration: Configuration) -> some View {
         SOCActionButton(textColor: .primary).makeBody(configuration: configuration).accentColor(Color(.systemGray5))
@@ -40,7 +43,9 @@ public struct SOCAlternativeButton: ButtonStyle {
 
 /// A button style with no background and tinted text in a `SlideOverCard`
 public struct SOCEmptyButton: ButtonStyle {
-    public init() {}
+    public init() {
+        
+    }
     
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -55,6 +60,10 @@ public struct SOCEmptyButton: ButtonStyle {
 public struct SOCDismissButton: View {
     @Environment(\.colorScheme) var colorScheme
     
+    public init() {
+        
+    }
+    
     public var body: some View {
         ZStack {
             Circle()
@@ -63,28 +72,5 @@ public struct SOCDismissButton: View {
                 .font(.system(size: 13.0, weight: .bold))
                 .foregroundColor(Color(white: colorScheme == .dark ? 0.62 : 0.51))
         }
-    }
-}
-
-struct Acessories_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            Button("Action") {
-                
-            }
-            .buttonStyle(SOCActionButton())
-            
-            Button("Alternative") {
-                
-            }
-            .buttonStyle(SOCAlternativeButton())
-            
-            Button("Empty") {
-                
-            }
-            .buttonStyle(SOCEmptyButton())
-            
-            SOCDismissButton()
-        }.previewLayout(.sizeThatFits)
     }
 }

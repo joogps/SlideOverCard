@@ -8,7 +8,8 @@
 import SwiftUI
 import Combine
 
-public struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier {
+/// A view modifier that presents a `SlideOverCard` over a `View`'s hierarchy through a `SOCManager` based on a `Binding` value
+internal struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier {
     var model: SOCModel
     @Binding var isPresented: Bool
     
@@ -16,9 +17,7 @@ public struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier {
     
     @Environment(\.colorScheme) var colorScheme
     
-    private var cancellables = Set<AnyCancellable>()
-    
-    public init(isPresented: Binding<Bool>,
+    init(isPresented: Binding<Bool>,
                 onDismiss: (() -> Void)? = nil,
                 options: SOCOptions,
                 style: SOCStyle<Style>,
@@ -34,20 +33,27 @@ public struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier {
                              content: content)
     }
     
-    public func body(content: Content) -> some View {
-        content
-            .onReceive(Just(colorScheme)) { value in
-                manager.set(colorScheme: value)
-            }
-            .onReceive(model.$showCard.receive(on: RunLoop.main)) { value in
-                isPresented = value
-            }
-            .onReceive(Just(isPresented)) { value in
-                if value {
-                    manager.present()
-                } else {
-                    manager.dismiss()
+    func body(content: Content) -> some View {
+        ZStack {
+            content
+                .onReceive(Just(colorScheme)) { value in
+                    manager.set(colorScheme: value)
                 }
-            }
+                .onReceive(model.$showCard.receive(on: RunLoop.main)) { value in
+                    isPresented = value
+                }
+                .onReceive(Just(isPresented)) { value in
+                    if value {
+                        manager.present()
+                    } else {
+                        manager.dismiss()
+                    }
+                }
+            
+            WindowAccessor(callback: { window in
+                manager.set(window: window)
+            })
+            .allowsHitTesting(false)
+        }
     }
 }

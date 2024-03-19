@@ -8,19 +8,21 @@
 import SwiftUI
 import Combine
 
-/// Present a `SlideOverCard` from anywhere in your app
+/// A manager class that presents a `SlideOverCard`overlay from anywhere in an app
+@available(*, deprecated, message: "Use the `slideOverCard(_:)` modifier instead.")
 internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     @ObservedObject var model: SOCModel
     
-    internal var cardController: UIHostingController<SlideOverCard<Content, Style>>?
+    var cardController: UIHostingController<SlideOverCard<Content, Style>>?
     
     var onDismiss: (() -> Void)?
     var content: () -> Content
+    var window: UIWindow?
     
     private var cancellables = Set<AnyCancellable>()
     
     init(model: SOCModel,
-        onDismiss: (() -> Void)?,
+         onDismiss: (() -> Void)?,
          options: SOCOptions,
          style: SOCStyle<Style>,
          @ViewBuilder content: @escaping () -> Content) {
@@ -49,20 +51,41 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
             .store(in: &cancellables)
     }
     
+    /// Presents a `SlideOverCard`
     @available(iOSApplicationExtension, unavailable)
-    public func present() {
-        if let cardController, let rootViewController = UIApplication.shared.windows.first?.rootViewController {
-            if rootViewController.presentedViewController == nil {
-                rootViewController.present(cardController, animated: false) {
-                    self.model.showCard = true
+    func present() {
+        if let cardController {
+            var rootViewController: UIViewController? = nil
+            
+            // Fallback
+            if rootViewController == nil {
+                let windowScene = UIApplication.shared
+                    .connectedScenes
+                    .filter { $0.activationState == .foregroundActive }
+                    .map { $0 as? UIWindowScene }
+                    .compactMap {$0 as? UIWindowScene }
+                    .first
+                
+                rootViewController = windowScene?
+                    .windows
+                    .filter { $0.isKeyWindow }
+                    .first?
+                    .rootViewController
+            }
+            
+            if let rootViewController {
+                if rootViewController.presentedViewController == nil {
+                    rootViewController.present(cardController, animated: false) {
+                        self.model.showCard = true
+                    }
                 }
             }
         }
     }
     
-    /// Dismiss a `SlideOverCard`
+    /// Dismisses a `SlideOverCard`
     @available(iOSApplicationExtension, unavailable)
-    public func dismiss() {
+    func dismiss() {
         onDismiss?()
         self.model.showCard = false
         DispatchQueue.main.asyncAfter(deadline: .now()+0.5) { [weak self] in
@@ -70,21 +93,13 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
         }
     }
     
-    public func set(colorScheme: ColorScheme) {
+    func set(colorScheme: ColorScheme) {
         cardController?.overrideUserInterfaceStyle = colorScheme.uiKit
     }
     
-    public func setBlurBehindCard() {
-        if let presentingViewController = cardController?.presentingViewController {
-            let blurView = UIVisualEffectView()
-            blurView.frame = presentingViewController.view.bounds
-            presentingViewController.view.insertSubview(blurView, belowSubview: cardController!.view)
-        }
+    func set(window: UIWindow) {
+        self.window = window
     }
-}
-
-public class SOCModel: ObservableObject {
-    @Published var showCard: Bool = false
 }
 
 extension ColorScheme {

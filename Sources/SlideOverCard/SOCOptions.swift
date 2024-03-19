@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// A structure that defines interaction options of a `SlideOverCard`
+/// A struct that defines interaction options of a `SlideOverCard`
 public struct SOCOptions: OptionSet {
     public let rawValue: Int8
     

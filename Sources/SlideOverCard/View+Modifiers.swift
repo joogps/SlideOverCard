@@ -15,7 +15,11 @@ extension View {
                                              style: SOCStyle<Style> = SOCStyle(),
                                              @ViewBuilder content: @escaping () -> Content) -> some View {
         return self
-            .modifier(SOCModifier(isPresented: isPresented, onDismiss: onDismiss, options: options, style: style, content: content))
+            .modifier(SOCModifier(isPresented: isPresented,
+                                  onDismiss: onDismiss,
+                                  options: options,
+                                  style: style,
+                                  content: content))
     }
     
     /// Present a `SlideOverCard` with a boolean optional
@@ -44,8 +48,9 @@ extension View {
     }
     
     // MARK: Deprecated
-
-    @available(*, deprecated, message: "Replace option parameters with the new option set.")
+    
+    
+    @available(*, deprecated, message: "Replace option parameters with the `SOCOptions` option set.")
     public func slideOverCard<Content: View>(isPresented: Binding<Bool>,
                                              onDismiss: (() -> Void)? = nil,
                                              dragEnabled: Binding<Bool> = .constant(true),
@@ -57,10 +62,13 @@ extension View {
                                             hideDismissButton: !displayExitButton.wrappedValue)
         
         return self
-            .slideOverCard(isPresented: isPresented, onDismiss: onDismiss, options: options, content: content)
+            .slideOverCard(isPresented: isPresented,
+                           onDismiss: onDismiss,
+                           options: options,
+                           content: content)
     }
     
-    @available(*, deprecated, message: "Replace option parameters with the new option set.")
+    @available(*, deprecated, message: "Replace option parameters with the `SOCOptions` option set.")
     public func slideOverCard<Item: Identifiable, Content: View>(item: Binding<Item?>,
                                                                  onDismiss: (() -> Void)? = nil,
                                                                  dragEnabled: Binding<Bool> = .constant(true),
@@ -72,6 +80,9 @@ extension View {
                                             hideDismissButton: !displayExitButton.wrappedValue)
         
         return self
-            .slideOverCard(item: item, onDismiss: onDismiss, options: options, content: content)
+            .slideOverCard(item: item,
+                           onDismiss: onDismiss,
+                           options: options,
+                           content: content)
     }
 }
