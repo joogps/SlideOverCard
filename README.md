@@ -10,15 +10,17 @@
     </a>
 </p>
 
-A SwiftUI card design, similar to the one used by Apple in HomeKit, AirPods, Apple Card and AirTag setup, NFC scanning, Wi-Fi password sharing and more. It is specially great for setup interactions.
+A SwiftUI card design similar to the one used by Apple in HomeKit, AirPods, Apple Card and AirTag setup, NFC scanning, Wi-Fi password sharing and more. It is specially great for setup interactions.
 
+<br>
 <p>
     <img alt="Clear Spaces demo" src="../assets/demo-clear-spaces.gif" margin-right=20px>
     <img alt="QR code scanner demo" src="../assets/demo-qr-code.gif">
     <img alt="Example preview demo" src="../assets/demo-example.gif">
 </p>
+<br>
 
-_From left to right: SlideOverCard being used in [Clear Spaces](https://apps.apple.com/us/app/clear-spaces/id1532666619), a QR code scanner prompt (made with [CodeScanner](https://github.com/twostraws/CodeScanner)) and a sample demo app_
+> _From left to right: SlideOverCard being used in [Clear Spaces](https://apps.apple.com/us/app/clear-spaces/id1532666619), a QR code scanner prompt (made with [CodeScanner](https://github.com/twostraws/CodeScanner)) and a sample demo app_
 
 ## Installation
 This repository is a Swift package, so just include it in your Xcode project and target under **File > Add package dependencies**. Then, `import SlideOverCard` to the Swift files where you'll be using it.
@@ -35,7 +37,7 @@ Adding a card to your app is insanely easy. Just add a `.slideOverCard()` modifi
 }
 ```
 
-In this case, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`.
+And that's it! It just works. In this case, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`.
 
 ## Extra steps
 <details>
@@ -60,7 +62,7 @@ In this case, `$isPresented` is a boolean binding. This way you can dismiss the 
   If you want to change styling attributes of the card, such as the **corner size**, the **corner style**, the **inner and outer paddings**, the  **dimming opacity** and the **shape fill style**, such as a gradient, just specify a custom `SOCStyle` struct.
   
   ```swift
-  .slideOverCard(isPresented: $isPresented, style: SOCStyle(corners: 24.0,
+  .slideOverCard(isPresented: $isPresented, style: SOCStyle(cornerRadius: 24.0,
                                                             continuous: false,
                                                             innerPadding: 16.0,
                                                             outerPadding: 4.0,
