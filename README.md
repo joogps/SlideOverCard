@@ -37,70 +37,74 @@ Adding a card to your app is insanely easy. Just add a `.slideOverCard()` modifi
 
 In this case, `$isPresented` is a boolean binding. This way you can dismiss the view anytime by setting it to `false`.
 
-## Customization
+## Extra steps
+<details>
+  <summary><b>Customization</b></summary><br>
 
-This view will have a transition, drag controls and a dismiss button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
+  The default `.slideOverCard()` modifier will have a transition, drag controls and a dismiss button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
+  ```swift
+  
+  // This creates a card that can be dragged, but not dismissed by dragging
+  .slideOverCard(isPresented: $isPresented, options: [.disableDragToDismiss]) {
+  }
+  
+  // This creates a card that can't be dragged or dismissed by dragging
+  .slideOverCard(isPresented: $isPresented, options: [.disableDrag, .disableDragToDismiss]) {
+  }
+  
+  // This creates a card with no dismiss button
+  .slideOverCard(isPresented: $isPresented, options: [.hideDismissButton]) {
+  }
+  ```
+  
+  If you want to change styling attributes of the card, such as the **corner size**, the **corner style**, the **inner and outer paddings**, the  **dimming opacity** and the **shape fill style**, such as a gradient, just specify a custom `SOCStyle` struct.
+  
+  ```swift
+  .slideOverCard(isPresented: $isPresented, style: SOCStyle(corners: 24.0,
+                                                            continuous: false,
+                                                            innerPadding: 16.0,
+                                                            outerPadding: 4.0,
+                                                            dimmingOpacity: 0.1,
+                                                            style: .black)) {
+  }
+  ```
+  
+  In case you want to execute code when the view is dismissed (either by the exit button or drag controls), you can also set an optional `onDismiss` closure parameter:
+  
+  ```swift
+  // This card will print some text when dismissed
+  .slideOverCard(isPresented: $isPresented, onDismiss: {
+      print("I was dismissed.")
+  }) {
+      // Here goes your amazing layout
+  }
+  ```
+  
+  Alternatively, you can add the card using a binding to an optional identifiable object. That will automatically animate the card between screen changes.
+  ```swift
+  // This uses a binding to an optional object in a switch statement
+  .slideOverCard(item: $activeCard) { item in
+      switch item {
+          case .welcomeView:
+              WelcomeView()
+          case .loginView:
+              LoginView()
+          default:
+              ..........
+      }
+  }
+  ```
+</details>
+
+<details>
+  <summary><b>Accessory views</b></summary><br>
+
+This package also includes a few accessory views to enhance your card layout. The first one is the `SOCActionButton()` button style, which can be applied to any button to give it a default "primary action" look, based on the app's accent color. The `SOCAlternativeButton()` style will reproduce the same design, but with gray. And `SOCEmptyButton()`  will create a text-only button. You can use them like this:
 ```swift
-
-// This creates a card that can be dragged, but not dismissed by dragging
-.slideOverCard(isPresented: $isPresented, options: [.disableDragToDismiss]) {
-}
-
-// This creates a card that can't be dragged or dismissed by dragging
-.slideOverCard(isPresented: $isPresented, options: [.disableDrag, .disableDragToDismiss]) {
-}
-
-// This creates a card with no dismiss button
-.slideOverCard(isPresented: $isPresented, options: [.hideDismissButton]) {
-}
-```
-
-If you want to change styling attributes of the card, such as the **corner size**, the **corner style**, the **inner and outer paddings**, the  **dimming opacity** and the **shape fill style**, such as a gradient, just specify a custom `SOCStyle` struct.
-
-```swift
-.slideOverCard(isPresented: $isPresented, style: SOCStyle(corners: 24.0,
-                                                          continuous: false,
-                                                          innerPadding: 16.0,
-                                                          outerPadding: 4.0,
-                                                          dimmingOpacity: 0.1,
-                                                          style: .black)) {
-}
-```
-
-In case you want to execute code when the view is dismissed (either by the exit button or drag controls), you can also set an optional `onDismiss` closure parameter:
-
-```swift
-// This card will print some text when dismissed
-.slideOverCard(isPresented: $isPresented, onDismiss: {
-    print("I was dismissed.")
-}) {
-    // Here goes your amazing layout
-}
-```
-
----
-
-Alternatively, you can add the card using a binding to an optional identifiable object. That will automatically animate the card between screen changes.
-```swift
-// This uses a binding to an optional object in a switch statement
-.slideOverCard(item: $activeCard) { item in
-    switch item {
-        case .welcomeView:
-            WelcomeView()
-        case .loginView:
-            LoginView()
-        default:
-            ..........
-    }
-}
-```
-
-## Accessory views
-This package also includes a few accessory views to enhance your card layout. The first one is the `SOCActionButton()` button style, which can be applied to any button to give it a default "primary action" look, based on the app's accent color. The `SOCAlternativeButton()` style will reproduce the same design, but with gray. And `SOCEmptyButton()`  will create an all-text "last option" kind of button. You can use them like this:
-```swift
-Button("Do something", action: {
+Button("Do something") {
   ...
-}).buttonStyle(SOCActionButton())
+}.buttonStyle(SOCActionButton()) // Use the modifier of your choice
 ```
 
 There's also the `SOCDismissButton()` view. This view will create the default dismiss button icon used for the card (based on https://github.com/joogps/ExitButton).
+</details>
