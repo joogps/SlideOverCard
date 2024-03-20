@@ -17,7 +17,7 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     
     var onDismiss: (() -> Void)?
     var content: () -> Content
-    var topViewController: UIViewController?
+    var window: UIWindow?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -52,8 +52,8 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     /// Presents a `SlideOverCard`
     @available(iOSApplicationExtension, unavailable)
     func present() {
-        if let cardController {
-            var topViewController = topViewController
+        if let cardController, !self.model.showCard {
+            var topViewController = window?.topViewController()
             
             // Fallback
             if topViewController == nil {
@@ -93,9 +93,7 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
         cardController?.overrideUserInterfaceStyle = colorScheme.uiKit
     }
     
-    func set(topViewController: UIViewController?) {
-        if let topViewController {
-            self.topViewController = topViewController
-        }
+    func set(window: UIWindow) {
+        self.window = window
     }
 }

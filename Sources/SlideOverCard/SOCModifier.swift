@@ -40,9 +40,7 @@ internal struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier 
                     manager.set(colorScheme: value)
                 }
                 .onReceive(model.$showCard.receive(on: RunLoop.main)) { value in
-                    if !value {
-                        isPresented = value
-                    }
+                    isPresented = value
                 }
                 .onReceive(Just(isPresented)) { value in
                     if value {
@@ -53,7 +51,7 @@ internal struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier 
                 }
             
             WindowAccessor(callback: { window in
-                manager.set(topViewController: window.topViewController())
+                manager.set(window: window)
             })
             .allowsHitTesting(false)
         }
