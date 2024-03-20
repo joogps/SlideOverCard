@@ -21,6 +21,8 @@ public struct SOCOptions: OptionSet {
     public static let disableDragToDismiss = SOCOptions(rawValue: 1 << 1)
     /// Hide the default dismiss button
     public static let hideDismissButton = SOCOptions(rawValue: 1 << 2)
+    /// Disable the ability of dismissing the card by tapping the background view
+    public static let disableTapToDismiss = SOCOptions(rawValue: 1 << 3)
     
     /// Create a `SOCOptions` from a set of values
     public static func fromValues(disableDrag: Bool = false,

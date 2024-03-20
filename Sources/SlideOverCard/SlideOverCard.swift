@@ -40,6 +40,11 @@ internal struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
                     .edgesIgnoringSafeArea(.all)
                     .transition(.opacity)
                     .zIndex(1)
+                    .onTapGesture {
+                        if !options.contains(.disableTapToDismiss) {
+                            dismiss()
+                        }
+                    }
             }
                 
             if model.showCard {
