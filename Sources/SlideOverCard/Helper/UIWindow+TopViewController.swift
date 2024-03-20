@@ -8,6 +8,7 @@
 import UIKit
 
 extension UIWindow {
+    /// Returns the topmost view controller in the window's hierarchy
     internal func topViewController() -> UIViewController? {
         var top = self.rootViewController
         while true {
