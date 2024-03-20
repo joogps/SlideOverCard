@@ -16,7 +16,7 @@ public struct SOCStyle<S: ShapeStyle> {
                 outerPadding: CGFloat = 6.0,
                 dimmingOpacity: CGFloat = 0.3,
                 style: S = Color(.systemGray6)) {
-        let cornerRadius = cornerRadius ?? (UIScreen.main.displayCornerRadius ?? 41.5)-3.0
+        let cornerRadius = cornerRadius ?? (UIScreen.main.displayCornerRadius ?? 41.5)-outerPadding/2.0
         
         self.init(cornerRadii: CGSize(width: cornerRadius, height: cornerRadius),
                   continuous: continuous,
