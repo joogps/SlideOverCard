@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// A button style that represents a main action in a `SlideOverCard`
+/// A button style that represents a main action used in a `SlideOverCard`
 public struct SOCActionButton: ButtonStyle {
     let textColor: Color
     
@@ -30,7 +30,7 @@ public struct SOCActionButton: ButtonStyle {
     }
 }
 
-/// A button style that represents an alternative action in a `SlideOverCard`
+/// A button style that represents an alternative action used in a `SlideOverCard`
 public struct SOCAlternativeButton: ButtonStyle {
     public init() {
         
@@ -41,7 +41,7 @@ public struct SOCAlternativeButton: ButtonStyle {
     }
 }
 
-/// A button style with no background and tinted text in a `SlideOverCard`
+/// A button style with no background and tinted text used in a `SlideOverCard`
 public struct SOCEmptyButton: ButtonStyle {
     public init() {
         

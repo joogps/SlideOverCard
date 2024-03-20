@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-/// Provide access to the corner radius of the display
-/// From https://github.com/kylebshr/ScreenCorners
-internal extension UIScreen {
+// From https://github.com/kylebshr/ScreenCorners
+
+extension UIScreen {
     private static let cornerRadiusKey: String = {
         let components = ["Radius", "Corner", "display", "_"]
         return components.reversed().joined()

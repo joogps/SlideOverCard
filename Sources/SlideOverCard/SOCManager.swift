@@ -1,5 +1,5 @@
 //
-//  Manager.swift
+//  SOCManager.swift
 //  
 //
 //  Created by João Gabriel Pozzobon dos Santos on 24/04/21.
@@ -99,16 +99,5 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     
     func set(window: UIWindow) {
         self.window = window
-    }
-}
-
-extension ColorScheme {
-    var uiKit: UIUserInterfaceStyle {
-        switch self {
-        case .light:
-            return .light
-        case .dark:
-            return .dark
-        }
     }
 }

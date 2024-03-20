@@ -1,6 +1,6 @@
 //
-//  File.swift
-//  
+//  SOCModel.swift
+//
 //
 //  Created by João Gabriel Pozzobon dos Santos on 19/03/24.
 //

@@ -10,12 +10,14 @@ import SwiftUI
 /// A struct thtat defines the style of a `SlideOverCard`
 public struct SOCStyle<S: ShapeStyle> {
     /// Initialize a style with a single value for corner radius
-    public init(corners: CGFloat = (UIScreen.main.displayCornerRadius ?? 41.5)-3.0,
+    public init(corners: CGFloat? = nil,
                 continuous: Bool = true,
                 innerPadding: CGFloat = 24.0,
                 outerPadding: CGFloat = 6.0,
                 dimmingOpacity: CGFloat = 0.3,
                 style: S = Color(.systemGray6)) {
+        let corners = corners ?? (UIScreen.main.displayCornerRadius ?? 41.5)-3.0
+        
         self.init(corners: CGSize(width: corners, height: corners),
                   continuous: continuous,
                   innerPadding: innerPadding,

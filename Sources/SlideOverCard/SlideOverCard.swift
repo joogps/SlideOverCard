@@ -134,9 +134,3 @@ extension SlideOverCard where Style == Color {
         self.content = content()
     }
 }
-
-extension Animation {
-    static var defaultSpring: Animation {
-        .spring(response: 0.35, dampingFraction: 1)
-    }
-}
