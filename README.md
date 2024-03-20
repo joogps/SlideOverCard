@@ -43,15 +43,19 @@ And that's it! It just works. In this case, `$isPresented` is a boolean binding.
 <details>
   <summary><b>Customization</b></summary><br>
 
-  The default `.slideOverCard()` modifier will have a transition, drag controls and a dismiss button set by default. You can override this by setting the `dragEnabled`,  `dragToDismiss` and `displayExitButton` boolean parameters:
+  The default `.slideOverCard()` modifier will have a transition, drag and tap controls and a dismiss button set by default. You can override this by manually setting the `SOCOptions` option set:
   ```swift
   
   // This creates a card that can be dragged, but not dismissed by dragging
   .slideOverCard(isPresented: $isPresented, options: [.disableDragToDismiss]) {
   }
   
-  // This creates a card that can't be dragged or dismissed by dragging
+  // This creates a card that can't be dragged nor dismissed by dragging
   .slideOverCard(isPresented: $isPresented, options: [.disableDrag, .disableDragToDismiss]) {
+  }
+
+  // This creates a card that can't be dismissed by an outside tap
+  .slideOverCard(isPresented: $isPresented, options: [.disableTapToDismiss]) {
   }
   
   // This creates a card with no dismiss button
@@ -110,3 +114,6 @@ Button("Do something") {
 
 There's also the `SOCDismissButton()` view. This view will create the default dismiss button icon used for the card (based on https://github.com/joogps/ExitButton).
 </details>
+
+## Demo
+You can check out a demo project for this package in the [`demo`](https://github.com/joogps/SlideOverCard/tree/demo) branch of this repository.
