@@ -17,7 +17,7 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     
     var onDismiss: (() -> Void)?
     var content: () -> Content
-    var window: UIWindow?
+    var topViewController: UIViewController?
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -42,9 +42,7 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
         model.$showCard
             .removeDuplicates()
             .sink { [weak self] value in
-                if value {
-                    self?.present()
-                } else {
+                if !value {
                     self?.dismiss()
                 }
             }
@@ -55,10 +53,10 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     @available(iOSApplicationExtension, unavailable)
     func present() {
         if let cardController {
-            var rootViewController: UIViewController? = nil
+            var topViewController = topViewController
             
             // Fallback
-            if rootViewController == nil {
+            if topViewController == nil {
                 let windowScene = UIApplication.shared
                     .connectedScenes
                     .filter { $0.activationState == .foregroundActive }
@@ -66,18 +64,16 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
                     .compactMap {$0 as? UIWindowScene }
                     .first
                 
-                rootViewController = windowScene?
+                topViewController = windowScene?
                     .windows
                     .filter { $0.isKeyWindow }
                     .first?
                     .rootViewController
             }
             
-            if let rootViewController {
-                if rootViewController.presentedViewController == nil {
-                    rootViewController.present(cardController, animated: false) {
-                        self.model.showCard = true
-                    }
+            if let topViewController {
+                topViewController.present(cardController, animated: false) {
+                    self.model.showCard = true
                 }
             }
         }
@@ -97,7 +93,9 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
         cardController?.overrideUserInterfaceStyle = colorScheme.uiKit
     }
     
-    func set(window: UIWindow) {
-        self.window = window
+    func set(topViewController: UIViewController?) {
+        if let topViewController {
+            self.topViewController = topViewController
+        }
     }
 }

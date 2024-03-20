@@ -49,7 +49,6 @@ extension View {
     
     // MARK: Deprecated
     
-    
     @available(*, deprecated, message: "Replace option parameters with the `SOCOptions` option set.")
     public func slideOverCard<Content: View>(isPresented: Binding<Bool>,
                                              onDismiss: (() -> Void)? = nil,
