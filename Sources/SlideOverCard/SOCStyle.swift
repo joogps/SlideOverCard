@@ -10,15 +10,15 @@ import SwiftUI
 /// A struct thtat defines the style of a `SlideOverCard`
 public struct SOCStyle<S: ShapeStyle> {
     /// Initialize a style with a single value for corner radius
-    public init(corners: CGFloat? = nil,
+    public init(cornerRadius: CGFloat? = nil,
                 continuous: Bool = true,
                 innerPadding: CGFloat = 24.0,
                 outerPadding: CGFloat = 6.0,
                 dimmingOpacity: CGFloat = 0.3,
                 style: S = Color(.systemGray6)) {
-        let corners = corners ?? (UIScreen.main.displayCornerRadius ?? 41.5)-3.0
+        let cornerRadius = cornerRadius ?? (UIScreen.main.displayCornerRadius ?? 41.5)-3.0
         
-        self.init(corners: CGSize(width: corners, height: corners),
+        self.init(cornerRadii: CGSize(width: cornerRadius, height: cornerRadius),
                   continuous: continuous,
                   innerPadding: innerPadding,
                   outerPadding: outerPadding,
@@ -26,14 +26,14 @@ public struct SOCStyle<S: ShapeStyle> {
                   style: style)
     }
     
-    /// Initialize a style with a custom corner size
-    public init(corners: CGSize,
+    /// Initialize a style with a custom size for corner radii
+    public init(cornerRadii: CGSize,
                 continuous: Bool = true,
                 innerPadding: CGFloat = 20.0,
                 outerPadding: CGFloat = 6.0,
                 dimmingOpacity: CGFloat = 0.3,
                 style: S = Color(.systemGray6)) {
-        self.cornerSize = corners
+        self.cornerRadii = cornerRadii
         self.continuous = continuous
         self.innerPadding = innerPadding
         self.outerPadding = outerPadding
@@ -41,7 +41,7 @@ public struct SOCStyle<S: ShapeStyle> {
         self.style = style
     }
     
-    let cornerSize: CGSize
+    let cornerRadii: CGSize
     let continuous: Bool
     
     let innerPadding: CGFloat

@@ -77,7 +77,7 @@ internal struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
     }
     
     private var cardShape: some Shape {
-        RoundedRectangle(cornerSize: style.cornerSize, style: .continuous)
+        RoundedRectangle(cornerSize: style.cornerRadii, style: .continuous)
     }
     
     private var card: some View {
