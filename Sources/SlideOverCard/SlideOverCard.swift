@@ -8,7 +8,6 @@
 import SwiftUI
 
 /// A view that displays a card that slides over from the bottom of the screen
-@available(*, deprecated, message: "Use the 'slideOverCard(_:)' modifier instead.")
 internal struct SlideOverCard<Content: View, Style: ShapeStyle>: View {
     @ObservedObject var model: SOCModel
     

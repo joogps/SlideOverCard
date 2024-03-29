@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 /// A manager class that presents a `SlideOverCard`overlay from anywhere in an app
-@available(*, deprecated, message: "Use the `slideOverCard(_:)` modifier instead.")
 internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
     @ObservedObject var model: SOCModel
     
@@ -60,7 +59,6 @@ internal class SOCManager<Content: View, Style: ShapeStyle>: ObservableObject {
                 let windowScene = UIApplication.shared
                     .connectedScenes
                     .filter { $0.activationState == .foregroundActive }
-                    .map { $0 as? UIWindowScene }
                     .compactMap { $0 as? UIWindowScene }
                     .first
                 
