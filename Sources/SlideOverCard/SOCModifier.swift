@@ -33,29 +33,7 @@ internal struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier 
                              content: content)
     }
     
-    @ViewBuilder
     func body(content: Content) -> some View {
-        if #available(iOS 15.0, *) {
-            reactiveContent(content: content)
-                .overlay {
-                    WindowAccessor(callback: { window in
-                        manager.set(window: window)
-                    })
-                    .allowsHitTesting(false)
-                }
-        } else {
-            ZStack {
-                reactiveContent(content: content)
-                
-                WindowAccessor { window in
-                    manager.set(window: window)
-                }
-                .allowsHitTesting(false)
-            }
-        }
-    }
-    
-    func reactiveContent(content: Content) -> some View {
         content
             .onReceive(Just(colorScheme)) { value in
                 manager.set(colorScheme: value)
@@ -70,5 +48,13 @@ internal struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier 
                     manager.dismiss()
                 }
             }
+            .background(windowAccessor)
+    }
+    
+    var windowAccessor: some View {
+        WindowAccessor { window in
+            manager.set(window: window)
+        }
+        .allowsHitTesting(false)
     }
 }
