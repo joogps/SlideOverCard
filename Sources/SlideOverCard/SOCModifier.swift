@@ -33,27 +33,42 @@ internal struct SOCModifier<ViewContent: View, Style: ShapeStyle>: ViewModifier 
                              content: content)
     }
     
+    @ViewBuilder
     func body(content: Content) -> some View {
-        ZStack {
-            content
-                .onReceive(Just(colorScheme)) { value in
-                    manager.set(colorScheme: value)
+        if #available(iOS 15.0, *) {
+            reactiveContent(content: content)
+                .overlay {
+                    WindowAccessor(callback: { window in
+                        manager.set(window: window)
+                    })
+                    .allowsHitTesting(false)
                 }
-                .onReceive(model.$showCard.receive(on: RunLoop.main)) { value in
-                    isPresented = value
+        } else {
+            ZStack {
+                reactiveContent(content: content)
+                
+                WindowAccessor { window in
+                    manager.set(window: window)
                 }
-                .onReceive(Just(isPresented)) { value in
-                    if value {
-                        manager.present()
-                    } else {
-                        manager.dismiss()
-                    }
-                }
-            
-            WindowAccessor(callback: { window in
-                manager.set(window: window)
-            })
-            .allowsHitTesting(false)
+                .allowsHitTesting(false)
+            }
         }
+    }
+    
+    func reactiveContent(content: Content) -> some View {
+        content
+            .onReceive(Just(colorScheme)) { value in
+                manager.set(colorScheme: value)
+            }
+            .onReceive(model.$showCard.receive(on: RunLoop.main)) { value in
+                isPresented = value
+            }
+            .onReceive(Just(isPresented)) { value in
+                if value {
+                    manager.present()
+                } else {
+                    manager.dismiss()
+                }
+            }
     }
 }
