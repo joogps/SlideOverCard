@@ -56,7 +56,7 @@ extension View {
                                              dragToDismiss: Binding<Bool> = .constant(true),
                                              displayExitButton: Binding<Bool> = .constant(true),
                                              @ViewBuilder content: @escaping () -> Content) -> some View {
-        var options = SOCOptions.fromValues(disableDrag: !dragEnabled.wrappedValue,
+        let options = SOCOptions.fromValues(disableDrag: !dragEnabled.wrappedValue,
                                             disableDragToDismiss: !dragToDismiss.wrappedValue,
                                             hideDismissButton: !displayExitButton.wrappedValue)
         
@@ -74,7 +74,7 @@ extension View {
                                                                  dragToDismiss: Binding<Bool> = .constant(true),
                                                                  displayExitButton: Binding<Bool> = .constant(true),
                                                                  @ViewBuilder content: @escaping (Item) -> Content) -> some View {
-        var options = SOCOptions.fromValues(disableDrag: !dragEnabled.wrappedValue,
+        let options = SOCOptions.fromValues(disableDrag: !dragEnabled.wrappedValue,
                                             disableDragToDismiss: !dragToDismiss.wrappedValue,
                                             hideDismissButton: !displayExitButton.wrappedValue)
         

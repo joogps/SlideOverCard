@@ -15,6 +15,8 @@ extension ColorScheme {
             return .light
         case .dark:
             return .dark
+        @unknown default:
+            return .light
         }
     }
 }
